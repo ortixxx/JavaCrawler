@@ -3,17 +3,21 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
+import java.sql.*;
 
 class usuario extends JFrame implements ActionListener, MouseListener{
 	private static final long serialVersionUID = 1L;
-	static String[] paginas;
-	static int multiplo=0;
+	static Vector<String> paginas = new Vector<String>(0, 1), estados = new Vector<String>(0, 1);
+	static int multiplo=0, pags=0;
 	static Bar barra;
+	static JButton buscar, detener;
+	static JComboBox<String> caja;
+	static DB db = new DB();
 	Thread [] hilos;
 	Main [] inicio;
 	Main model = new Main();
 	Vector<String> otras = new Vector<String>(), otrasUrls = new Vector<String>(), dos = new Vector<String>(0, 1);
-	static JButton buscar, detener;
+	
 	JTextField clave;
 	String actual = " ";
 	JTable Tabla;
@@ -25,31 +29,29 @@ class usuario extends JFrame implements ActionListener, MouseListener{
 		interfaz();
 	}
 	
-	public void interfaz(){
-		paginas = new String []{
-				"https://www.sintesis.mx/plaza/Tlaxcala",
-				"https://www.elsoldetlaxcala.com.mx/",
-				"http://www.masnoticias.net/",
-				"http://expreso.com.mx/",
-				"https://www.noticiasdelsoldelalaguna.com.mx/",
-				"http://eldigital.com.mx/"};
-		
+	public void interfaz(){		
 		clave = new JTextField("siniestro");
-		clave.setBounds(5, 5, 380, 25);
+		clave.setBounds(5, 5, 350, 25);
 		clave.selectAll();
 		add(clave);
 		clave.addActionListener(this);
 		
 		buscar = new JButton("Buscar");
-		buscar.setBounds(390, 4, 80, 27);
+		buscar.setBounds(475, 4, 80, 27);
 		add(buscar);
 		buscar.addActionListener(this);
 		
 		detener = new JButton("Detener");
 		detener.setBounds(475, 4, 80, 27);
 		detener.setEnabled(false);
-		add(detener);
+		//add(detener);
 		detener.addActionListener(this);
+		
+		try {
+			box();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 		barra = new Bar();
 		add(barra);
@@ -82,10 +84,30 @@ class usuario extends JFrame implements ActionListener, MouseListener{
 		setVisible(true);
 	}
 	
+	public void box() throws SQLException{
+		String sql = "select nombre from estados";
+		ResultSet rs = db.runSql(sql);
+		while(rs.next()){
+			estados.add(rs.getString(1));
+		}
+		
+		caja=new JComboBox<String>(estados);
+		caja.insertItemAt("Estados", 0);
+		caja.setSelectedIndex(0);
+		caja.setMaximumRowCount(10);
+		caja.setBounds(360, 4, 110, 27);
+		add(caja);
+	}
+
 	@SuppressWarnings("deprecation")
 	public void actionPerformed(ActionEvent e){
 		try{
 			if(e.getSource()==buscar || e.getSource()==clave){
+				if(caja.getSelectedIndex()==0){
+					JOptionPane.showMessageDialog(null, "Seleccione un estado");
+					return;
+				}
+				paginas(caja.getSelectedIndex());
 				buscar();			
 				return;
 			}
@@ -93,7 +115,7 @@ class usuario extends JFrame implements ActionListener, MouseListener{
 		}
 		if(e.getSource()==detener){
 			buscar.setEnabled(true);
-			detener.setEnabled(false);
+			//detener.setEnabled(false);
 			barra.setValue(barra.getMaximum());
 			for(int i=0; i<hilos.length;i++){
 				if(hilos[i].isAlive())
@@ -102,13 +124,17 @@ class usuario extends JFrame implements ActionListener, MouseListener{
 		}
 	}
 	
-	public void buscar(){
-		if(actual.equals(clave.getText())){
-			JOptionPane.showMessageDialog(null, "Busqueda finalizada\nResultados: "+ (Main.getX()-1));
-			return;
+	public void paginas(int estado) throws SQLException {
+		paginas.clear();
+		String sql = "select nombre from periodicos where id_estados = "+estado;
+		ResultSet rs = db.runSql(sql);
+		while(rs.next()){
+			paginas.add(rs.getString(1));
 		}
-		
-		detener.setEnabled(true);
+	}
+
+	public void buscar(){
+		//detener.setEnabled(true);
 		buscar.setEnabled(false);
 		
 		actual = clave.getText();
@@ -118,15 +144,17 @@ class usuario extends JFrame implements ActionListener, MouseListener{
 		
 		if(!dos.isEmpty()){
 			multiplo=dos.size();
-			hilos = new Thread[paginas.length*multiplo];
-			inicio = new Main[paginas.length*multiplo];
+			pags = paginas.size();
+			hilos = new Thread[pags*multiplo];
+			inicio = new Main[pags*multiplo];
 			barra.setValue(0);
-			barra.setMax(paginas.length*multiplo);
+			barra.setMax(pags*multiplo);
 			for(int i=0;i<dos.size();i++){
-				for(int j=0;j<paginas.length;j++){
-					inicio[j+(i*paginas.length)] = new Main(paginas[j], dos.elementAt(i));
-					hilos[j+(i*paginas.length)] = new Thread(inicio[j+(i*paginas.length)]);
-					hilos[j+(i*paginas.length)].start();
+				//System.out.println(dos.elementAt(i));
+				for(int j=0;j<pags;j++){
+					inicio[j+(i*pags)] = new Main(paginas.elementAt(j), dos.elementAt(i));
+					hilos[j+(i*pags)] = new Thread(inicio[j+(i*pags)]);
+					hilos[j+(i*pags)].start();
 				}
 			}
 		}
@@ -136,21 +164,22 @@ class usuario extends JFrame implements ActionListener, MouseListener{
 		int bandera = 0, comillas = 0;
 		String nuevo = "";
 		for(int i=0;i<s.length();i++){
-			if(s.charAt(i)==' ' && bandera == 0)
+			if(s.charAt(i)==' ' && bandera == 0){
+				if(nuevo.length()!=0){
+					dos.add(nuevo);
+				}
+				nuevo="";
 				continue;
+			}
 			if(Character.isAlphabetic(s.charAt(i))){
 				nuevo += s.charAt(i);
 				continue;
 			}else{
 				if(s.charAt(i)=='"' && comillas<1){
 					if(nuevo.length()!=0){
-						if(nuevo.length()<3){
-							JOptionPane.showMessageDialog(null, "Palabra muy corta\n>>Minimo 3 letras<<");
-							return;
-						}
 						dos.add(nuevo);
-						nuevo="";
 					}
+					nuevo="";
 					comillas++;
 					bandera = 1;
 					continue;
@@ -161,20 +190,14 @@ class usuario extends JFrame implements ActionListener, MouseListener{
 					}
 					comillas=0;
 					bandera=0;
-					if(nuevo.length()<3){
-						JOptionPane.showMessageDialog(null, "Palabra muy corta\n>>Minimo 3 letras<<");
-						return;
+					if(nuevo.length()!=0){
+						dos.add(nuevo);
 					}
-					dos.add(nuevo);
 					nuevo="";
 				}
 			}
 		}
 		if(nuevo.length()!=0){
-			if(nuevo.length()<3){
-				JOptionPane.showMessageDialog(null, "Palabra muy corta\n>>Minimo 3 letras<<");
-				return;
-			}
 			dos.add(nuevo);
 		}
 	}
@@ -229,7 +252,7 @@ class usuario extends JFrame implements ActionListener, MouseListener{
 	}
 	
 	public static int getTotal(){
-		return paginas.length;
+		return paginas.size();
 	}
 	
 	public static Bar getBarra(){

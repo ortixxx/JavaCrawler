@@ -66,7 +66,6 @@ public class MetaTagsExtractor {
         			Elements imgs = doc.select("img[src*=.png],img[src*=.jpeg],img[src*=.jpg]");
         			int aux;
         			for(Element uno: imgs){
-        				System.out.println(uno);
         				this.img = uno.toString().replaceAll("width", "°");
         				aux = Integer.parseInt(img.substring(img.indexOf('°')+3, img.indexOf('°')+6));
         				if(aux>100)
