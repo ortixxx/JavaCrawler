@@ -331,7 +331,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		          UIManager.setLookAndFeel(name);
 		     }
 		     catch (Exception e) {}
-		}
+		}   
 		new usuario();
 	}
 }

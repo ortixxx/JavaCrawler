@@ -2,12 +2,13 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import mozilla.MetaTagsExtractor;
-import java.util.Date;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -18,7 +19,9 @@ public class Main implements Runnable{
 	public static DefaultTableModel model;
 	public static Semaforo agrega;
 	public static int x = 1, y = 0;
-	public static Date fecha = new Date();
+	public static LocalDate mark;
+	LocalDate copia;
+	DateTimeFormatter format;
 	String sitio, clave, texto, titulo, date;
 	Vector<Object> uotro;
 	BufferedImage c;
@@ -32,6 +35,9 @@ public class Main implements Runnable{
 	}
 	
 	public Main(){
+		format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		mark = LocalDate.now().minusDays(2);
+	    
 		model = new DefaultTableModel(){
 			private static final long serialVersionUID = 1L;
 
@@ -119,7 +125,13 @@ public class Main implements Runnable{
 			date=mte.getDate();
 			if(!date.equals("No date")){
 				date = mte.getDate().substring(0, 10);
-				//Comparar fecha .-.
+				copia = LocalDate.of(Integer.parseInt(date.substring(0,4)), Integer.parseInt(date.substring(5,7)), Integer.parseInt(date.substring(8)));
+				if(copia.isBefore(mark)){
+					System.out.println(mark+"\n"+copia);
+					System.out.println("salto un sitio");
+					agrega.Libera();
+					return;
+				}
 			}
 			
 			uotro = new Vector<Object>();
