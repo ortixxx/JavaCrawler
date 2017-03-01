@@ -7,7 +7,7 @@ import org.jsoup.select.Elements;
 
 public class MetaTagsExtractor {
 	public static String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
-	public String title, des, img, date;
+	public String title, aux, des, img, date;
 	public Element metaTag;
 	public Document doc;
 	
@@ -27,7 +27,13 @@ public class MetaTagsExtractor {
         	metaTag = doc.select("meta[property=og:title]").first();
         	this.title = metaTag.attr("content");
         }catch(Exception e){
-        	title="No title";
+        	try{
+        		title="No title";
+        		metaTag = doc.select("title").first();
+        		aux = metaTag.text();
+        	}catch(Exception ex){
+        		aux = "No aux";
+        	}   	
         }
         
     	try{        
@@ -44,13 +50,19 @@ public class MetaTagsExtractor {
     	
         try{
         	metaTag = doc.select("meta[property=article:published_time]").first();
-        	this.date = metaTag.attr("content");        	
+        	this.date = metaTag.attr("content");
         }catch(Exception e){
         	try{
         		metaTag = doc.select("name=revised").first();
                	this.date = metaTag.attr("content");
         	}catch(Exception ex){
-        		this.date = "No date";
+        		try{
+        			metaTag = doc.select("name=date").first();
+        			this.date = metaTag.attr("content");
+        		}catch(Exception exe){
+        			this.date = "No date";
+        		}
+        		
         	}  
         }
         
@@ -89,5 +101,8 @@ public class MetaTagsExtractor {
     }
     public String getDate(){
     	return date;
+    }
+    public String getAux(){
+    	return aux;
     }
 }

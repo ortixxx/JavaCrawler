@@ -5,8 +5,11 @@ import java.awt.event.*;
 import java.util.Vector;
 import java.sql.*;
 
-class usuario extends JFrame implements ActionListener, MouseListener{
+class usuario extends JFrame implements ActionListener, MouseListener, WindowListener{
 	private static final long serialVersionUID = 1L;
+	static JMenuBar menuBar;
+	static JMenu fileMenu;
+	JMenuItem newMenuItem;
 	static Vector<String> paginas = new Vector<String>(0, 1), estados = new Vector<String>(0, 1);
 	static int multiplo=0, pags=0;
 	static Bar barra;
@@ -29,20 +32,30 @@ class usuario extends JFrame implements ActionListener, MouseListener{
 		interfaz();
 	}
 	
-	public void interfaz(){		
+	public void interfaz(){
+		menuBar = new JMenuBar();
+	    fileMenu = new JMenu("File");
+	    fileMenu.setMnemonic(KeyEvent.VK_F);
+	    menuBar.add(fileMenu);
+	    
+	    newMenuItem = new JMenuItem("New", KeyEvent.VK_N);
+	    fileMenu.add(newMenuItem);
+	    
+	    setJMenuBar(menuBar);
+	    
 		clave = new JTextField("siniestro");
-		clave.setBounds(5, 5, 350, 25);
+		clave.setBounds(5, 15, 350, 25);
 		clave.selectAll();
 		add(clave);
 		clave.addActionListener(this);
 		
 		buscar = new JButton("Buscar");
-		buscar.setBounds(475, 4, 80, 27);
+		buscar.setBounds(475, 14, 80, 27);
 		add(buscar);
 		buscar.addActionListener(this);
 		
 		detener = new JButton("Detener");
-		detener.setBounds(475, 4, 80, 27);
+		detener.setBounds(475, 14, 80, 27);
 		detener.setEnabled(false);
 		//add(detener);
 		detener.addActionListener(this);
@@ -71,16 +84,16 @@ class usuario extends JFrame implements ActionListener, MouseListener{
 		
 		PanelTabla = new JPanel();
 		PanelTabla.setLayout(new BorderLayout());
-		PanelTabla.setBounds(5, 40, 785, 426);
+		PanelTabla.setBounds(5, 50, 785, 546);
 		PanelTabla.add(Consulta, BorderLayout.CENTER);
 		add(PanelTabla);
 		
 		setIconImage(new ImageIcon("loge.png").getImage());
-		setSize(800,500);
+		setSize(800,650);
 		setLayout(null);
 		setLocationRelativeTo(null);
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		addWindowListener(this);
 		setVisible(true);
 	}
 	
@@ -95,7 +108,7 @@ class usuario extends JFrame implements ActionListener, MouseListener{
 		caja.insertItemAt("Estados", 0);
 		caja.setSelectedIndex(0);
 		caja.setMaximumRowCount(10);
-		caja.setBounds(360, 4, 110, 27);
+		caja.setBounds(360, 14, 110, 27);
 		add(caja);
 	}
 
@@ -266,6 +279,50 @@ class usuario extends JFrame implements ActionListener, MouseListener{
 			return detener;
 	}
 	
+	public static int getMultiplo(){
+		return multiplo;
+	}
+
+	@Override
+	public void windowActivated(WindowEvent arg0) {
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent arg0) {
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent arg0) {
+		Object [] opciones ={"Aceptar","Cancelar"};
+		int eleccion = JOptionPane.showOptionDialog(rootPane,"Desea salir de la aplicacion","Mensaje de Confirmacion",
+		JOptionPane.YES_NO_OPTION,
+		JOptionPane.QUESTION_MESSAGE,null,opciones,"Aceptar");
+		if (eleccion == JOptionPane.YES_OPTION)
+			System.exit(0);
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent arg0) {
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent arg0) {
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent arg0) {
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent arg0) {
+		
+	}
+	
 	public static void main(String[]args) {
 		String os = System.getProperty("os.name").toLowerCase();
 		String name = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
@@ -276,9 +333,5 @@ class usuario extends JFrame implements ActionListener, MouseListener{
 		     catch (Exception e) {}
 		}
 		new usuario();
-	}
-	
-	public static int getMultiplo(){
-		return multiplo;
 	}
 }

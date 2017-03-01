@@ -19,7 +19,7 @@ public class Main implements Runnable{
 	public static Semaforo agrega;
 	public static int x = 1, y = 0;
 	public static Date fecha = new Date();
-	String sitio, clave, texto, titulo;
+	String sitio, clave, texto, titulo, date;
 	Vector<Object> uotro;
 	BufferedImage c;
 	Document doc;
@@ -62,7 +62,8 @@ public class Main implements Runnable{
 		}catch (Exception e){
 			System.out.println("Error en "+sitio);
 		}
-		System.out.println("MurioHilo: "+(y++));
+		//System.out.println("MurioHilo: "+(y++));
+		y++;
 		if(y != (usuario.getTotal())*usuario.getMultiplo()){
 			usuario.getBarra().setValue(y);
 	    }else{
@@ -115,6 +116,11 @@ public class Main implements Runnable{
 		agrega.Espera();
 		if(!urls.contains(URL)){
 			mte = new MetaTagsExtractor(URL);
+			date=mte.getDate();
+			if(!date.equals("No date")){
+				date = mte.getDate().substring(0, 10);
+				//Comparar fecha .-.
+			}
 			
 			uotro = new Vector<Object>();
 			System.out.println(x+"\n************************************\n");
@@ -129,18 +135,20 @@ public class Main implements Runnable{
 			
 			titulo = mte.getTitle();
 	    	if(titulo.equals("No title")){
-	    		titulo = texto;
+	    		if(texto.length() != 0)
+	    			titulo = texto;
+	    		else
+	    			titulo = mte.getAux();
 	    	}
 			
-			uotro.add(titulo+"\n"+mte.getDate()+"\n"+mte.getDes());
+			uotro.add(titulo+"\n"+date+"\n"+mte.getDes());
 			model.addRow(uotro);
 			noticias.add(mte.getTitle());
 			urls.add(URL);
-			
 		}
 		agrega.Libera();
 	}
-	
+
 	public static Vector<String> getVector(int in){
 		if(in==0)
 			return noticias;

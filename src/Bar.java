@@ -6,7 +6,7 @@ public class Bar extends JProgressBar{
 	public Bar(){
         setMinimum(0);
         setStringPainted(true);
-        setBounds(560, 5, 230, 26);
+        setBounds(560, 15, 230, 26);
 	}
 	
 	public void setMax(int max){
