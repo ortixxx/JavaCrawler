@@ -10,6 +10,8 @@ public class MetaTagsExtractor {
 	public String title, aux, des, img, date;
 	public Element metaTag;
 	public Document doc;
+	public Elements hrefs;
+	public int cont = 0;
 	
     public MetaTagsExtractor(String url) {
     	String link = url;
@@ -18,7 +20,10 @@ public class MetaTagsExtractor {
     	}catch(Exception e){
     		return;
     	}
-    	    	
+    	 
+    	hrefs = doc.select("body").select("a[href]");
+    	cont = hrefs.size();
+    	
     	//Elements metas = doc.select("meta");
     	//System.out.println(metas);
         //System.out.println("Link :\t"+link);
@@ -62,7 +67,6 @@ public class MetaTagsExtractor {
         		}catch(Exception exe){
         			this.date = "No date";
         		}
-        		
         	}  
         }
         
@@ -104,5 +108,11 @@ public class MetaTagsExtractor {
     }
     public String getAux(){
     	return aux;
+    }
+    public Elements getHref(){
+    	return hrefs;
+    }
+    public int getCont(){
+    	return cont;
     }
 }

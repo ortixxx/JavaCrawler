@@ -3,19 +3,19 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
-import java.sql.*;
+import bdex.sqlite;
 
 class usuario extends JFrame implements ActionListener, MouseListener, WindowListener{
 	private static final long serialVersionUID = 1L;
 	static JMenuBar menuBar;
 	static JMenu fileMenu;
-	JMenuItem newMenuItem;
+	static JMenuItem newMenuItem;
 	static Vector<String> paginas = new Vector<String>(0, 1), estados = new Vector<String>(0, 1);
 	static int multiplo=0, pags=0;
 	static Bar barra;
 	static JButton buscar, detener;
 	static JComboBox<String> caja;
-	static DB db = new DB();
+	static sqlite queryPeriodicos = new sqlite(), queryEstados = new sqlite();
 	Thread [] hilos;
 	Main [] inicio;
 	Main model = new Main();
@@ -60,11 +60,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		//add(detener);
 		detener.addActionListener(this);
 		
-		try {
-			box();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		box();
 		
 		barra = new Bar();
 		add(barra);
@@ -94,15 +90,14 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		setLocationRelativeTo(null);
 		setResizable(false);
 		addWindowListener(this);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setVisible(true);
 	}
 	
-	public void box() throws SQLException{
+	public void box(){
 		String sql = "select nombre from estados";
-		ResultSet rs = db.runSql(sql);
-		while(rs.next()){
-			estados.add(rs.getString(1));
-		}
+		
+		estados = queryEstados.getQuery(sql);
 		
 		caja=new JComboBox<String>(estados);
 		caja.insertItemAt("Estados", 0);
@@ -137,19 +132,15 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		}
 	}
 	
-	public void paginas(int estado) throws SQLException {
+	public void paginas(int estado){
 		paginas.clear();
-		String sql = "select nombre from periodicos where id_estados = "+estado;
-		ResultSet rs = db.runSql(sql);
-		while(rs.next()){
-			paginas.add(rs.getString(1));
-		}
+		String sql = "select nombre from periodicos where id_estado = "+estado;
+		paginas = queryPeriodicos.getQuery(sql);
 	}
 
 	public void buscar(){
 		//detener.setEnabled(true);
 		buscar.setEnabled(false);
-		
 		actual = clave.getText();
 		Main.clearVector();
 		dos.clear();
@@ -165,7 +156,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			for(int i=0;i<dos.size();i++){
 				//System.out.println(dos.elementAt(i));
 				for(int j=0;j<pags;j++){
-					inicio[j+(i*pags)] = new Main(paginas.elementAt(j), dos.elementAt(i));
+					inicio[j+(i*pags)] = new Main(paginas.elementAt(j), dos.elementAt(i), 0);
 					hilos[j+(i*pags)] = new Thread(inicio[j+(i*pags)]);
 					hilos[j+(i*pags)].start();
 				}
@@ -295,12 +286,12 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 
 	@Override
 	public void windowClosing(WindowEvent arg0) {
-		Object [] opciones ={"Aceptar","Cancelar"};
-		int eleccion = JOptionPane.showOptionDialog(rootPane,"Desea salir de la aplicacion","Mensaje de Confirmacion",
-		JOptionPane.YES_NO_OPTION,
-		JOptionPane.QUESTION_MESSAGE,null,opciones,"Aceptar");
-		if (eleccion == JOptionPane.YES_OPTION)
+		int opcion = JOptionPane.showConfirmDialog(null, "Realmente deseas salir?", "Advertencia", JOptionPane.YES_NO_OPTION);
+		if (opcion == 0){
+			queryPeriodicos.dbClose();
+			queryEstados.dbClose();
 			System.exit(0);
+		}
 	}
 
 	@Override

@@ -13,7 +13,9 @@ class Semaforo {
 				wait();
 
 
-			} catch( InterruptedException e  ) {return;}
+			} catch( InterruptedException e  ) {
+				return;
+			}
 		}
 		Recursos--;
 	}
@@ -22,6 +24,13 @@ class Semaforo {
 		Recursos++;
 		notify();
 	}
-
+	
+	public int getRecursos(){
+		return Recursos;
+	}
+	
+	public void setRecursos(int r){
+		this.Recursos = r;
+	}
 
 }
