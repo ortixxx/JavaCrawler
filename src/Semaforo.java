@@ -6,7 +6,7 @@ class Semaforo {
 		this.Recursos=Recursos;
 	}
 
-	public synchronized void Espera() {
+	public synchronized void Rojo() {
 		while (Recursos<=0) {
 			try {
 
@@ -20,7 +20,7 @@ class Semaforo {
 		Recursos--;
 	}
 
-	public synchronized void Libera() {
+	public synchronized void Verde() {
 		Recursos++;
 		notify();
 	}

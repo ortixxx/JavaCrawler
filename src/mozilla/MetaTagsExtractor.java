@@ -21,7 +21,7 @@ public class MetaTagsExtractor {
     		return;
     	}
     	 
-    	hrefs = doc.select("body").select("a[href]");
+    	hrefs = doc.select("a[href]");
     	cont = hrefs.size();
     	
     	//Elements metas = doc.select("meta");
@@ -95,6 +95,9 @@ public class MetaTagsExtractor {
     }
     
 	public String getTitle(){
+		if(title==null)
+    		title="No title";
+		
     	return title;
     }
     public String getDes(){
@@ -104,6 +107,9 @@ public class MetaTagsExtractor {
     	return img;
     }
     public String getDate(){
+    	if(date==null)
+    		date="No date";
+    		
     	return date;
     }
     public String getAux(){

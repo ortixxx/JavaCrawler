@@ -43,7 +43,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	    
 	    setJMenuBar(menuBar);
 	    
-		clave = new JTextField("siniestro");
+		clave = new JTextField("trump");
 		clave.setBounds(5, 15, 350, 25);
 		clave.selectAll();
 		add(clave);
@@ -101,7 +101,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		
 		caja=new JComboBox<String>(estados);
 		caja.insertItemAt("Estados", 0);
-		caja.setSelectedIndex(0);
+		caja.setSelectedIndex(7);
 		caja.setMaximumRowCount(10);
 		caja.setBounds(360, 14, 110, 27);
 		add(caja);
@@ -154,7 +154,6 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			barra.setValue(0);
 			barra.setMax(pags*multiplo);
 			for(int i=0;i<dos.size();i++){
-				//System.out.println(dos.elementAt(i));
 				for(int j=0;j<pags;j++){
 					inicio[j+(i*pags)] = new Main(paginas.elementAt(j), dos.elementAt(i), 0);
 					hilos[j+(i*pags)] = new Thread(inicio[j+(i*pags)]);
@@ -252,7 +251,6 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			setText((value == null) ? "" : value.toString());
 		    return this;
 		}
-	 
 	}
 	
 	public static int getTotal(){
