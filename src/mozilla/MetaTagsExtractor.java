@@ -1,9 +1,13 @@
 package mozilla;
 
+import java.util.Vector;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import bdex.sqlite;
 
 public class MetaTagsExtractor {
 	public static String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
@@ -11,7 +15,10 @@ public class MetaTagsExtractor {
 	public Element metaTag;
 	public Document doc;
 	public Elements hrefs;
-	public int cont = 0;
+	public sqlite queryDos = new sqlite();
+	public Vector<String> semi = new Vector<String>(0, 1), finale = new Vector<String>(0, 1);
+	
+	
 	
     public MetaTagsExtractor(String url) {
     	String link = url;
@@ -21,8 +28,7 @@ public class MetaTagsExtractor {
     		return;
     	}
     	 
-    	hrefs = doc.select("a[href]");
-    	cont = hrefs.size();
+    	paginasNivelDos();
     	
     	//Elements metas = doc.select("meta");
     	//System.out.println(metas);
@@ -94,6 +100,22 @@ public class MetaTagsExtractor {
         }
     }
     
+	public void paginasNivelDos() {
+		hrefs = doc.select("a[href]");
+		String sql = "select nombre from periodicos";
+		semi = queryDos.getQuery(sql);
+		
+		for(Element link : hrefs){
+			if(semi.contains(link.attr("abs:href")) || link.attr("abs:href").length()==0 || link.attr("abs:href").contains("facebook") || link.attr("abs:href").contains("twitter") || link.attr("abs:href").contains("google") || link.attr("abs:href").contains("youtube") || link.attr("abs:href").contains("pinterest") || link.attr("abs:href").contains("instagram") || link.attr("abs:href").contains("whatsapp"))
+				continue;
+			
+			finale.add(link.attr("abs:href"));
+		}
+		
+		if(finale.isEmpty())
+			finale.add(semi.firstElement());
+	}
+
 	public String getTitle(){
 		if(title==null)
     		title="No title";
@@ -101,6 +123,9 @@ public class MetaTagsExtractor {
     	return title;
     }
     public String getDes(){
+    	if(des==null)
+    		des="No description";
+    	
     	return des;
     }
     public String getImage(){
@@ -115,10 +140,10 @@ public class MetaTagsExtractor {
     public String getAux(){
     	return aux;
     }
-    public Elements getHref(){
-    	return hrefs;
+    public Vector<String> getHref(){
+    	return finale;
     }
-    public int getCont(){
-    	return cont;
+    public void closeBd(){
+    	queryDos.dbClose();
     }
 }

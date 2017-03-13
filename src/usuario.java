@@ -8,8 +8,8 @@ import bdex.sqlite;
 class usuario extends JFrame implements ActionListener, MouseListener, WindowListener{
 	private static final long serialVersionUID = 1L;
 	static JMenuBar menuBar;
-	static JMenu fileMenu;
-	static JMenuItem newMenuItem;
+	static JMenu file, search;
+	static JMenuItem importar, exportar, salir, start, stop, pause, nivelDos;
 	static Vector<String> paginas = new Vector<String>(0, 1), estados = new Vector<String>(0, 1);
 	static int multiplo=0, pags=0;
 	static Bar barra;
@@ -33,17 +33,44 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	}
 	
 	public void interfaz(){
-		menuBar = new JMenuBar();
-	    fileMenu = new JMenu("File");
-	    fileMenu.setMnemonic(KeyEvent.VK_F);
-	    menuBar.add(fileMenu);
+	    file = new JMenu("Systema");
+	    importar = new JMenuItem("Importar", new ImageIcon("icon/import-icon.png"));
+	    exportar = new JMenuItem("Exportar", new ImageIcon("icon/export-icon.png"));
+	    salir = new JMenuItem("Salir", new ImageIcon("icon/delete-icon.png"));
 	    
-	    newMenuItem = new JMenuItem("New", KeyEvent.VK_N);
-	    fileMenu.add(newMenuItem);
+	    search = new JMenu("Busqueda");
+	    start = new JMenuItem("Iniciar", new ImageIcon("icon/Start-2-icon.png"));
+	    stop  = new JMenuItem("Detener", new ImageIcon("icon/Stop-2-icon.png"));
+	    pause = new JMenuItem("Pausar", new ImageIcon("icon/Pause-icon.png"));
+	    nivelDos = new JCheckBoxMenuItem("Nivel Dos", true);
 	    
+	    
+	    
+	    file.setMnemonic(KeyEvent.VK_A);
+	    search.setMnemonic(KeyEvent.VK_B);
+	    	start.setMnemonic(KeyEvent.VK_I);
+	    	pause.setMnemonic(KeyEvent.VK_P);
+	    	stop.setMnemonic(KeyEvent.VK_D);
+	    	nivelDos.setMnemonic(KeyEvent.VK_V);
+	    
+	    salir.addActionListener(this);
+	    
+	    menuBar = new JMenuBar();
+	    menuBar.add(file);
+	    	file.add(importar);
+	    	file.add(exportar);
+	    	file.addSeparator();
+	    	file.add(salir);
+	    menuBar.add(search);
+	    	search.add(start);
+	    	search.add(pause);
+	    	search.add(stop);
+	    	search.addSeparator();
+	    	search.add(nivelDos);
+	    	
 	    setJMenuBar(menuBar);
 	    
-		clave = new JTextField("trump");
+		clave = new JTextField("siniestro");
 		clave.setBounds(5, 15, 350, 25);
 		clave.selectAll();
 		add(clave);
@@ -101,7 +128,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		
 		caja=new JComboBox<String>(estados);
 		caja.insertItemAt("Estados", 0);
-		caja.setSelectedIndex(7);
+		caja.setSelectedIndex(0);
 		caja.setMaximumRowCount(10);
 		caja.setBounds(360, 14, 110, 27);
 		add(caja);
@@ -128,6 +155,15 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			for(int i=0; i<hilos.length;i++){
 				if(hilos[i].isAlive())
 					hilos[i].stop();
+			}
+			return;
+		}
+		if(e.getSource()==salir){
+			int o = JOptionPane.showConfirmDialog(null, "Realmente deseas salir?", "Advertencia", JOptionPane.YES_NO_OPTION);
+			if (o == 0){
+				queryPeriodicos.dbClose();
+				queryEstados.dbClose();
+				System.exit(0);
 			}
 		}
 	}
@@ -283,9 +319,9 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	}
 
 	@Override
-	public void windowClosing(WindowEvent arg0) {
-		int opcion = JOptionPane.showConfirmDialog(null, "Realmente deseas salir?", "Advertencia", JOptionPane.YES_NO_OPTION);
-		if (opcion == 0){
+	public void windowClosing(WindowEvent arg0) {		
+		int o = JOptionPane.showConfirmDialog(null, "Realmente deseas salir?", "Advertencia", JOptionPane.YES_NO_OPTION);
+		if (o == 0){
 			queryPeriodicos.dbClose();
 			queryEstados.dbClose();
 			System.exit(0);

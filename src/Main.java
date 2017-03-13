@@ -17,15 +17,15 @@ public class Main implements Runnable{
 	public static Vector<String> urls = new Vector<String>(0, 1), noticias  = new Vector<String>(0, 1);
 	public static DefaultTableModel model;
 	public static Semaforo luz;
-	public static int x = 1, y = 0;
+	public static int x = 1, y = 0, z = 0, bandera=0;
 	public static LocalDate mark;
-	Elements nuevaPags;
 	Thread [] hilos;
 	Main [] inicio;
-	int nivel, pags;
+	int nivel;
 	LocalDate copia;
 	String sitio, clave, texto, titulo, date;
 	Vector<Object> uotro;
+	Vector<String> nuevaPags;
 	BufferedImage c;
 	Document doc;
 	MetaTagsExtractor mte;
@@ -64,16 +64,21 @@ public class Main implements Runnable{
 	}
 	
 	public void run(){
+		if(nivel==0 && bandera==0){
+			bandera++;
+			z = usuario.getTotal()*usuario.getMultiplo();
+		}
+			
 		extrae();
-		System.out.println("MurioHilo: "+(y++));
-		//y++;		
-		if(y != usuario.getTotal()*usuario.getMultiplo()){
+		//System.out.println("MurioHilo: "+(y++));
+		y++;		
+		if(y != z-1){
 			usuario.getBarra().setValue(y);
 	    }else{
 	    	usuario.getBarra().setValue(y);
 	    	usuario.getBoton(0).setEnabled(true);
 	    	usuario.getBoton(1).setEnabled(false);
-	    	//JOptionPane.showMessageDialog(null, "Busqueda Nv.1 finalizada\nEncontrados: "+(x-1));
+	    	JOptionPane.showMessageDialog(null, "Busqueda finalizada\nEncontrados: "+(x-1));
 	    }
 	}
 	
@@ -108,7 +113,7 @@ public class Main implements Runnable{
 			}
 				
 			
-		if(URL.contains("facebook") || URL.contains("google") || URL.contains("twitter") || URL.contains("pinterest")){
+		if(URL.contains("facebook") || URL.contains("google") || URL.contains("twitter") || URL.contains("youtube") || URL.contains("pinterest") || URL.contains("instagram") || URL.contains("whatsapp")){
 			luz.Verde();
 			return;
 		}
@@ -122,13 +127,14 @@ public class Main implements Runnable{
 				date = mte.getDate().substring(0, 10);
 				copia = LocalDate.of(Integer.parseInt(date.substring(0,4)), Integer.parseInt(date.substring(5,7)), Integer.parseInt(date.substring(8)));
 				if(copia.isBefore(mark)){
+					mte.closeBd();
 					luz.Verde();
 					return;
 				}
 			}
 			
 			uotro = new Vector<Object>();
-			System.out.println("Nivel: "+nivel+"\n#"+x+"\n************************************\n");
+			//System.out.println("Nivel: "+nivel+"\n#"+x+"\n************************************\n");
 			uotro.add(x++);
 			
 			try {
@@ -140,37 +146,43 @@ public class Main implements Runnable{
 			
 			titulo = mte.getTitle();
 	    	if(titulo.equals("No title")){
-	    		if(texto.length() != 0)
+	    		if(texto.length() != 0 && texto!=null)
 	    			titulo = texto;
 	    		else
 	    			titulo = mte.getAux();
 	    	}
-			
+	    	
+	    	if(titulo==null && date.equals("No date") && mte.getDes().equals("No description") && nivel==1){
+	    		mte.closeBd();
+	    		luz.Verde();
+	    		return;	    		
+	    	}
+	    		
+	    		
 			uotro.add(titulo+"\n"+date+"\n"+mte.getDes());
 			model.addRow(uotro);
 			noticias.add(mte.getTitle());
 			urls.add(URL);	
 			
+			luz.Verde();
+			
 			if(nivel == 0){
-				pags = mte.getCont();
-				Elements nuevaPags = mte.getHref();
-				hilos = new Thread[pags];
-				inicio = new Main[pags];
-				int m=0;
-				for(Element link: nuevaPags){
-					if(link.attr("abs:href").length()==0){
-						m++;
-						continue;
-					}
-					
-					inicio[m] = new Main(gato(link.attr("abs:href")), clave, 1);
-					hilos[m] = new Thread(inicio[m]);
-					hilos[m].start();
-					m++;
+				nuevaPags = new Vector<String>(0, 1);
+				nuevaPags = mte.getHref();
+				hilos = new Thread[nuevaPags.size()];
+				inicio = new Main[nuevaPags.size()];
+				z += nuevaPags.size();
+				usuario.getBarra().setMax(z);
+				for(int i=0;i<nuevaPags.size();i++){					
+					inicio[i] = new Main(gato(nuevaPags.elementAt(i)), clave, 1);
+					hilos[i] = new Thread(inicio[i]);
+					hilos[i].start();
 				}
 			}
+			mte.closeBd();
+		}else{
+			luz.Verde();
 		}
-		luz.Verde();
 	}
 
 	public static Vector<String> getVector(int in){
