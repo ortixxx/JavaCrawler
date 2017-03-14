@@ -76,8 +76,7 @@ public class Main implements Runnable{
 			usuario.getBarra().setValue(y);
 	    }else{
 	    	usuario.getBarra().setValue(y);
-	    	usuario.getBoton(0).setEnabled(true);
-	    	usuario.getBoton(1).setEnabled(false);
+	    	usuario.getBoton().setEnabled(true);
 	    	JOptionPane.showMessageDialog(null, "Busqueda finalizada\nEncontrados: "+(x-1));
 	    }
 	}
@@ -250,7 +249,12 @@ public class Main implements Runnable{
 	public static int getY(){
 		return y;
 	}
+	
 	public static int getX() {
 		return x;
+	}
+	
+	public Thread[] getHilos(){
+		return hilos;
 	}
 }
