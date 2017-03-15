@@ -70,9 +70,9 @@ public class Main implements Runnable{
 		}
 			
 		extrae();
-		//System.out.println("MurioHilo: "+(y++));
-		y++;		
-		if(y != z-1){
+		System.out.println("MurioHilo: "+(y++));
+		//y++;		
+		if((y != z && nivel == 0) || (y != z-1 && nivel==1)){
 			usuario.getBarra().setValue(y);
 	    }else{
 	    	usuario.getBarra().setValue(y);
@@ -81,7 +81,7 @@ public class Main implements Runnable{
 	    }
 	}
 	
-	public void extrae() {
+	public void extrae(){
 		try {
 			doc = Jsoup.connect(sitio).get();
 			sitio = remove(sitio);
@@ -157,26 +157,27 @@ public class Main implements Runnable{
 	    		return;	    		
 	    	}
 	    		
-	    		
 			uotro.add(titulo+"\n"+date+"\n"+mte.getDes());
 			model.addRow(uotro);
 			noticias.add(mte.getTitle());
 			urls.add(URL);	
 			
-			luz.Verde();
+			nuevaPags = mte.getHref();
 			
-			if(nivel == 0){
+			if(nivel == 0 && (z+nuevaPags.size())<300 && ((JCheckBoxMenuItem)usuario.getNivelDos()).getState()){
+				luz.Verde();
+				z += nuevaPags.size();
 				nuevaPags = new Vector<String>(0, 1);
-				nuevaPags = mte.getHref();
 				hilos = new Thread[nuevaPags.size()];
 				inicio = new Main[nuevaPags.size()];
-				z += nuevaPags.size();
 				usuario.getBarra().setMax(z);
 				for(int i=0;i<nuevaPags.size();i++){					
 					inicio[i] = new Main(gato(nuevaPags.elementAt(i)), clave, 1);
 					hilos[i] = new Thread(inicio[i]);
 					hilos[i].start();
 				}
+			}else{
+				luz.Verde();				
 			}
 			mte.closeBd();
 		}else{
@@ -194,6 +195,7 @@ public class Main implements Runnable{
 	public static void clearVector(){
 		x = 1;
 		y = 0;
+		bandera = 0;
 		model.setRowCount(0);
 		noticias.clear();
 		urls.clear();

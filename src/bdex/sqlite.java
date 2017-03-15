@@ -51,9 +51,7 @@ public class sqlite {
 	    			+ "('http://www.elfaromx.com/', 14),('http://pagina24zacatecas.com.mx/', 32),('http://www.diariopuntual.com/noticias', 21),('http://www.diariodf.mx/', 9),('http://durango.notigram.com/', 10),('http://www.lajornadazacatecas.com.mx/', 32),('http://www.ljz.mx', 32),('http://www.diarioeyipantla.com/', 30),('http://desdelared.com.mx/', 1),('http://informadorbcs.com/', 3),('http://monitoreconomico.org/noticias/', 2),('http://noticabos.org/', 3),('http://www.campeche.com.mx/', 4),('http://lavozdecoatzacoalcos.com.mx/', 27),('http://diariolavozdelsureste.com/chiapas/', 7),('http://lavozdetapachula.com/', 7),('http://lavozdecomitan.com/', 7),"
 	    			+ "('http://expresszacatecas.com/', 32),('http://www.sie7edechiapas.com/', 7),('http://puentelibre.mx/', 8),('http://elheraldodesaltillo.mx/', 5),('http://www.colimanoticias.com/', 6),('http://angelguardian.mx/', 6),('http://colimapm.com/', 6),('http://impacto.mx/', 9),('http://impacto.mx/seccion-alarma', 9),('http://heraldoleon.mx/', 19),('http://periodicocorreo.com.mx/', 11),('http://www.red-noticias.com/', 12),('http://www.novedadesacapulco.mx/', 12),('http://www.diariovialibre.com.mx/', 13),('http://www.diariodelashuastecas.com/principal/', 13),('http://www.cronicahidalgo.com/', 13),('http://abcdezihuatanejo.com/', 12),"
 	    			+ "('http://redesdelsur.com.mx/2016/', 12),('http://noticiasdemichoacan.com/', 16),('http://elregional.com.mx/', 17),('http://www.eltiempodenayarit.mx/', 18),('http://www.elhorizonte.mx/', 19),('http://reporteindigo.com/', 19);");
-	    	}else{
-	    		System.out.println("Estados: "+rs.getInt(1)+"\nPeriodicos: "+rd.getInt(1));
-	    	}
+	    	}	    	
 	    }catch(Exception e){
 	    	System.err.println(e.getMessage());
 	    }
@@ -70,6 +68,14 @@ public class sqlite {
 			e.printStackTrace();
 		}
 		return this.aux;
+	}
+	
+	public void setQuery(String query){
+		try{
+			statement.executeUpdate(query);
+		}catch(Exception e){
+			e.printStackTrace();
+		}		
 	}
 	
 	public void dbClose(){

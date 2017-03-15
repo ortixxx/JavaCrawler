@@ -11,14 +11,14 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	static JMenuBar menuBar;
 	static JMenu sistem, search;
 	static JMenuItem consultar, agregar, borrar, importar, exportar, salir, start, stop, pause, nivelDos;
-	static Vector<String> paginas = new Vector<String>(0, 1), estados = new Vector<String>(0, 1);
-	static int multiplo=0, pags=0;
+	static Vector<String> paginas = new Vector<String>(0, 1);
+	static int multiplo=0, pags=0, frame = 0;
 	static JTextField clave, nuevoLink;
 	static JButton buscar, delete, insert;
 	static Bar barra;
 	static JComboBox<String> caja, cajaABC, cajaLinks;
 	static String[] estadosABC = new String[]{"Aguascalientes","Baja California","Baja California Sur","Campeche","Coahuila","Colima","Chiapas","Chihuahua","CDMX","Durango","Guanajuato","Guerrero","Hidalgo","Jalisco","Edo de México","Michoacán","Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas"};
-	static sqlite queryPeriodicos = new sqlite(), queryEstados = new sqlite();
+	static sqlite con = new sqlite();
 	Thread [] hilos, aux;
 	Main [] inicio;
 	Main model = new Main();
@@ -34,7 +34,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	}
 	
 	public void interfaz(){
-	    sistem = new JMenu("Systema");
+	    sistem = new JMenu("Sistema");
 	    agregar = new JMenuItem("Agregar Pagina");
 	    borrar = new JMenuItem("Borrar Pagina");
 	    consultar = new JMenuItem("Consultar");
@@ -46,7 +46,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	    start = new JMenuItem("Iniciar", new ImageIcon("icon/Start-2-icon.png"));
 	    stop  = new JMenuItem("Detener", new ImageIcon("icon/Stop-2-icon.png"));
 	    pause = new JMenuItem("Pausar", new ImageIcon("icon/Pause-icon.png"));
-	    nivelDos = new JCheckBoxMenuItem("Nivel Dos", true);
+	    nivelDos = new JCheckBoxMenuItem("Nivel Dos", false);
 	    
 	    sistem.setMnemonic(KeyEvent.VK_S);
 	    	agregar.setMnemonic(KeyEvent.VK_A);
@@ -110,14 +110,6 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		PanelTabla.setBounds(5, 50, 785, 546);
 		PanelTabla.add(Consulta, BorderLayout.CENTER);
 		add(PanelTabla);
-						
-		setIconImage(new ImageIcon("loge.png").getImage());
-		setSize(800,650);
-		setLayout(null);
-		setLocationRelativeTo(null);
-		setResizable(false);
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setVisible(true);
 		
 		nuevoLink = new JTextField("http://...");
 		nuevoLink.setBounds(10, 10, 340, 30);
@@ -148,6 +140,13 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		ad.setResizable(false);
 		
 		listeners();
+		setIconImage(new ImageIcon("loge.png").getImage());
+		setSize(800,650);
+		setLayout(null);
+		setLocationRelativeTo(null);
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setVisible(true);
 	}
 	
 	private void listeners() {
@@ -162,17 +161,18 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	    start.addActionListener(this);
 		stop.addActionListener(this);
 		
+		cajaABC.addActionListener(this);
+		delete.addActionListener(this);
+		insert.addActionListener(this);
+		
 		Tabla.addMouseListener(this);
 		
 		addWindowListener(this);
+		ad.addWindowListener(this);
 	}
 
-	public void box(){
-		String sql = "select nombre from estados";
-		
-		estados = queryEstados.getQuery(sql);
-		
-		caja=new JComboBox<String>(estados);
+	public void box(){		
+		caja=new JComboBox<String>(estadosABC);
 		caja.insertItemAt("Estados", 0);
 		caja.setSelectedIndex(0);
 		caja.setMaximumRowCount(10);
@@ -185,11 +185,10 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	public void paginas(int estado){
 		paginas.clear();
 		String sql = "select nombre from periodicos where id_estado = "+estado;
-		paginas = queryPeriodicos.getQuery(sql);
+		paginas = con.getQuery(sql);
 	}
 
 	public void buscar(){
-		//detener.setEnabled(true);
 		buscar.setEnabled(false);
 		actual = clave.getText();
 		Main.clearVector();
@@ -294,19 +293,20 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		return multiplo;
 	}
 	
+	public static JMenuItem getNivelDos(){
+		return nivelDos;
+	}
+	
 	@SuppressWarnings("deprecation")
 	public void actionPerformed(ActionEvent e){
-		try{
-			if(e.getSource()==buscar || e.getSource()==clave || e.getSource()==start){
-				if(caja.getSelectedIndex()==0){
-					JOptionPane.showMessageDialog(null, "Seleccione un estado");
-					return;
-				}
-				paginas(caja.getSelectedIndex());
-				buscar();			
+		if(e.getSource()==buscar || e.getSource()==clave || e.getSource()==start){
+			if(caja.getSelectedIndex()==0){
+				JOptionPane.showMessageDialog(null, "Seleccione un estado");
 				return;
 			}
-		}catch(Exception exe){
+			paginas(caja.getSelectedIndex());
+			buscar();			
+			return;
 		}
 		if(e.getSource()==stop){
 			buscar.setEnabled(true);
@@ -330,13 +330,13 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		if(e.getSource()==salir){
 			int o = JOptionPane.showConfirmDialog(null, "Realmente deseas salir?", "Advertencia", JOptionPane.YES_NO_OPTION);
 			if (o == 0){
-				queryPeriodicos.dbClose();
-				queryEstados.dbClose();
+				con.dbClose();
 				System.exit(0);
 			}
 			return;
 		}
 		if(e.getSource()==agregar){
+			frame=1;
 			ad.remove(cajaABC);
 			ad.remove(delete);
 			ad.remove(cajaLinks);
@@ -348,6 +348,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			return;
 		}
 		if(e.getSource()==borrar){
+			frame=2;
 			ad.remove(cajaABC);
 			ad.remove(insert);
 			ad.remove(nuevoLink);
@@ -361,6 +362,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			return;
 		}
 		if(e.getSource()==consultar){
+			frame=2;
 			ad.remove(nuevoLink);
 			ad.remove(delete);
 			ad.remove(insert);
@@ -373,8 +375,49 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			ad.setVisible(true);
 			return;
 		}
+		if(e.getSource()==cajaABC && frame==1){
+			return;
+		}
+		if(e.getSource()==insert){
+			if(nuevoLink.getText().length()==0)
+				return;
+		}
+		if(e.getSource()==cajaABC && frame==2){
+			if(cajaABC.getSelectedIndex()==0){
+				cajaLinks.removeAllItems();
+				cajaLinks.insertItemAt("Links", 0);
+				cajaLinks.setSelectedIndex(0);
+				return;
+			}
+				
+			ordenaCaja();			
+			return;
+		}
+		if(e.getSource()==delete){
+			if(cajaABC.getSelectedIndex()==0){
+				JOptionPane.showMessageDialog(null, "Seleccione un estado");
+				return;
+			}				
+			
+			int res = JOptionPane.showConfirmDialog(null, "Realmente deseas eliminar\n"+cajaLinks.getSelectedItem()+" ?", "Advertencia", JOptionPane.YES_NO_OPTION);
+			if (res == 0){
+				String sql = "DELETE FROM periodicos WHERE nombre = '"+cajaLinks.getSelectedItem()+"' AND id_estado = "+cajaABC.getSelectedIndex();
+				con.setQuery(sql);
+			}
+			ordenaCaja();
+			JOptionPane.showMessageDialog(null, "Pagina eliminada");
+			return;
+		}
 	}
 	
+	private void ordenaCaja() {
+		paginas(cajaABC.getSelectedIndex());
+		cajaLinks.removeAllItems();
+		for(int i=0;i<paginas.size();i++){
+			cajaLinks.addItem(paginas.elementAt(i));
+		}
+	}
+
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2){
 			if (e.getSource() == Tabla) {
@@ -395,14 +438,20 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	public void windowActivated(WindowEvent arg0){}
 	@Override
 	public void windowClosed(WindowEvent arg0){}
-
 	@Override
-	public void windowClosing(WindowEvent arg0) {		
-		int o = JOptionPane.showConfirmDialog(null, "Realmente deseas salir?", "Advertencia", JOptionPane.YES_NO_OPTION);
-		if (o == 0){
-			queryPeriodicos.dbClose();
-			queryEstados.dbClose();
-			System.exit(0);
+	public void windowClosing(WindowEvent arg0) {
+		if(arg0.getSource()==this){
+			int o = JOptionPane.showConfirmDialog(null, "Realmente deseas salir?", "Advertencia", JOptionPane.YES_NO_OPTION);
+			if (o == 0){
+				con.dbClose();
+				System.exit(0);
+			}
+		}
+		if(arg0.getSource()==ad){
+			cajaABC.setSelectedIndex(0);
+			cajaLinks.removeAllItems();
+			cajaLinks.insertItemAt("Links", 0);
+			cajaLinks.setSelectedIndex(0);
 		}
 	}
 	@Override
@@ -412,8 +461,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	@Override
 	public void windowIconified(WindowEvent arg0){}
 	@Override
-	public void windowOpened(WindowEvent arg0){}
-	
+	public void windowOpened(WindowEvent arg0){}	
 	public static void main(String[]args) {
 		String os = System.getProperty("os.name").toLowerCase();
 		String name = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
