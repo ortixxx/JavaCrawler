@@ -2,8 +2,10 @@ import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 import java.util.Vector;
 import bdex.sqlite;
+import org.apache.commons.validator.routines.UrlValidator;
 
 class usuario extends JFrame implements ActionListener, MouseListener, WindowListener{
 	private static final long serialVersionUID = 1L;
@@ -19,11 +21,12 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	static JComboBox<String> caja, cajaABC, cajaLinks;
 	static String[] estadosABC = new String[]{"Aguascalientes","Baja California","Baja California Sur","Campeche","Coahuila","Colima","Chiapas","Chihuahua","CDMX","Durango","Guanajuato","Guerrero","Hidalgo","Jalisco","Edo de México","Michoacán","Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas"};
 	static sqlite con = new sqlite();
+	static String sql, actual = " ";
+	static UrlValidator validar = new UrlValidator();
 	Thread [] hilos, aux;
 	Main [] inicio;
 	Main model = new Main();
 	Vector<String> otras = new Vector<String>(), otrasUrls = new Vector<String>(), dos = new Vector<String>(0, 1);
-	String actual = " ";
 	JTable Tabla;
 	JScrollPane Consulta;
 	JPanel PanelTabla;
@@ -164,6 +167,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		cajaABC.addActionListener(this);
 		delete.addActionListener(this);
 		insert.addActionListener(this);
+		nuevoLink.addActionListener(this);
 		
 		Tabla.addMouseListener(this);
 		
@@ -184,7 +188,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	
 	public void paginas(int estado){
 		paginas.clear();
-		String sql = "select nombre from periodicos where id_estado = "+estado;
+		sql = "select nombre from periodicos where id_estado = "+estado;
 		paginas = con.getQuery(sql);
 	}
 
@@ -375,12 +379,28 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			ad.setVisible(true);
 			return;
 		}
-		if(e.getSource()==cajaABC && frame==1){
+		if(e.getSource()==insert || (e.getSource()==nuevoLink && cajaABC.getSelectedIndex()!=0)){
+			if(validar.isValid(nuevoLink.getText())){
+				int res = JOptionPane.showConfirmDialog(null, "Se agregara: \n"+nuevoLink.getText()+" -> "+cajaABC.getSelectedItem()+"\nes correcto?", "Mensaje de confirmacion", JOptionPane.YES_NO_OPTION);
+				if (res == 0){
+					sql = "INSERT OR IGNORE INTO periodicos VALUES ('"+nuevoLink.getText()+"', "+cajaABC.getSelectedIndex()+")";
+					try {
+						con.setQuery(sql);
+						nuevoLink.setText("http://...");
+						cajaABC.setSelectedIndex(0);
+						JOptionPane.showMessageDialog(null, "Pagina agregada");
+					} catch (SQLException ex) {
+						JOptionPane.showMessageDialog(null, "Eror al agregar\n"+nuevoLink.getText());
+					}
+				}				
+			}else{
+				JOptionPane.showMessageDialog(null, "URL no válida");
+			}
 			return;
 		}
-		if(e.getSource()==insert){
-			if(nuevoLink.getText().length()==0)
-				return;
+		if(e.getSource()==nuevoLink && cajaABC.getSelectedIndex()==0){
+			cajaABC.grabFocus();
+			return;
 		}
 		if(e.getSource()==cajaABC && frame==2){
 			if(cajaABC.getSelectedIndex()==0){
@@ -401,11 +421,15 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			
 			int res = JOptionPane.showConfirmDialog(null, "Realmente deseas eliminar\n"+cajaLinks.getSelectedItem()+" ?", "Advertencia", JOptionPane.YES_NO_OPTION);
 			if (res == 0){
-				String sql = "DELETE FROM periodicos WHERE nombre = '"+cajaLinks.getSelectedItem()+"' AND id_estado = "+cajaABC.getSelectedIndex();
-				con.setQuery(sql);
+				sql = "DELETE FROM periodicos WHERE nombre = '"+cajaLinks.getSelectedItem()+"' AND id_estado = "+cajaABC.getSelectedIndex();
+				try{
+					con.setQuery(sql);
+					ordenaCaja();
+					JOptionPane.showMessageDialog(null, "Pagina eliminada");
+				}catch(Exception ex){
+					JOptionPane.showMessageDialog(null, "Error al eliminar\n"+cajaLinks.getSelectedItem());
+				}
 			}
-			ordenaCaja();
-			JOptionPane.showMessageDialog(null, "Pagina eliminada");
 			return;
 		}
 	}
@@ -439,7 +463,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	@Override
 	public void windowClosed(WindowEvent arg0){}
 	@Override
-	public void windowClosing(WindowEvent arg0) {
+	public void windowClosing(WindowEvent arg0){
 		if(arg0.getSource()==this){
 			int o = JOptionPane.showConfirmDialog(null, "Realmente deseas salir?", "Advertencia", JOptionPane.YES_NO_OPTION);
 			if (o == 0){
