@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
@@ -14,11 +15,13 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	static JMenu sistem, search;
 	static JMenuItem consultar, agregar, borrar, importar, exportar, salir, start, stop, pause, nivelDos;
 	static Vector<String> paginas = new Vector<String>(0, 1);
-	static int multiplo=0, pags=0, frame = 0;
+	static Vector<Object> agregaAbc;
+	static boolean bandera=false;
+	static int multiplo=0, pags=0, frame = 0, reglon;
 	static JTextField clave, nuevoLink;
-	static JButton buscar, delete, insert;
+	static JButton buscar, insert, delete;
 	static Bar barra;
-	static JComboBox<String> caja, cajaABC, cajaLinks;
+	static JComboBox<String> caja, cajaABC;
 	static String[] estadosABC = new String[]{"Aguascalientes","Baja California","Baja California Sur","Campeche","Coahuila","Colima","Chiapas","Chihuahua","CDMX","Durango","Guanajuato","Guerrero","Hidalgo","Jalisco","Edo de México","Michoacán","Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas"};
 	static sqlite con = new sqlite();
 	static String sql, actual = " ";
@@ -27,9 +30,10 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	Main [] inicio;
 	Main model = new Main();
 	Vector<String> otras = new Vector<String>(), otrasUrls = new Vector<String>(), dos = new Vector<String>(0, 1);
-	JTable Tabla;
-	JScrollPane Consulta;
-	JPanel PanelTabla;
+	JTable Tabla, tablaAbc;
+	JScrollPane Consulta, scrollAbc;
+	JPanel PanelTabla, panelAbc;
+	DefaultTableModel modelAbc;
 	
 	public usuario(){
 		super("Gallbo: Motor de busqueda");
@@ -121,25 +125,55 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		cajaABC = new JComboBox<String>(estadosABC);
 		cajaABC.insertItemAt("Estados", 0);
 		cajaABC.setSelectedIndex(0);
-		cajaABC.setMaximumRowCount(10);
+		cajaABC.setMaximumRowCount(13);
 		cajaABC.setSize(120, 30);
 		
-		cajaLinks = new JComboBox<String>();
-		cajaLinks.insertItemAt("Links", 0);
-		cajaLinks.setSelectedIndex(0);
-		cajaLinks.setMaximumRowCount(10);
-		cajaLinks.setLocation(140, 10);
+		modelAbc = new DefaultTableModel(){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+	        public Class<?> getColumnClass(int col) {
+	            switch(col) {
+	            	case 0: return int.class;
+	            	default: return String.class;
+	            }
+	        }
+			
+			@Override
+			public boolean isCellEditable(int row, int col) {
+	             return false;
+	        }
+	    };
+	    
+	    modelAbc.addColumn("#");
+	    modelAbc.addColumn("Links");
+	    
+	    tablaAbc = new JTable(modelAbc);
+	    tablaAbc.setRowHeight(25);
+	    tablaAbc.getColumnModel().getColumn(0).setMaxWidth(20);
+		tablaAbc.getColumnModel().getColumn(0).setResizable(false);
+	    tablaAbc.getColumnModel().getColumn(1).setMaxWidth(460);
+		tablaAbc.getColumnModel().getColumn(1).setResizable(false);
+		tablaAbc.getTableHeader().setReorderingAllowed(false);
 		
-		delete = new JButton("Borrar");
-		delete.setBounds(490, 9, 120, 32);
+		scrollAbc = new JScrollPane(tablaAbc);
 		
+		panelAbc = new JPanel();
+		panelAbc.setLayout(new BorderLayout());
+		panelAbc.setBounds(140, 10, 470, 277);
+		panelAbc.add(scrollAbc, BorderLayout.CENTER);
+				
 		insert = new JButton("Agregar");
 		insert.setBounds(490, 9, 120, 32);
+		
+		delete = new JButton("Borrar");
+		delete.setBounds(10, 258, 120, 30);
 		
 		ad = new JDialog(this, "ABC periodicos", true);
 		ad.setLayout(null);
 		ad.setSize(625, 80);
 		ad.setLocationRelativeTo(null);
+		ad.setLocation( ad.getY()+17, ad.getX()-170);
 		ad.setResizable(false);
 		
 		listeners();
@@ -165,11 +199,12 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		stop.addActionListener(this);
 		
 		cajaABC.addActionListener(this);
-		delete.addActionListener(this);
 		insert.addActionListener(this);
+		delete.addActionListener(this);
 		nuevoLink.addActionListener(this);
 		
 		Tabla.addMouseListener(this);
+		tablaAbc.addMouseListener(this);
 		
 		addWindowListener(this);
 		ad.addWindowListener(this);
@@ -343,39 +378,40 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			frame=1;
 			ad.remove(cajaABC);
 			ad.remove(delete);
-			ad.remove(cajaLinks);
+			ad.remove(panelAbc);
 			ad.add(nuevoLink);
 			cajaABC.setLocation(360, 10);
 			ad.add(cajaABC);
 			ad.add(insert);
+			ad.setSize(625, 80);
 			ad.setVisible(true);
 			return;
 		}
 		if(e.getSource()==borrar){
-			frame=2;
+			frame=2;			
 			ad.remove(cajaABC);
 			ad.remove(insert);
 			ad.remove(nuevoLink);
-			ad.remove(cajaLinks);
+			ad.remove(panelAbc);
 			cajaABC.setLocation(10, 10);
 			ad.add(cajaABC);
-			cajaLinks.setSize(340, 30);
-			ad.add(cajaLinks);
+			ad.add(panelAbc);
 			ad.add(delete);
+			ad.setSize(625, 325);
 			ad.setVisible(true);
 			return;
 		}
 		if(e.getSource()==consultar){
-			frame=2;
+			frame=3;
 			ad.remove(nuevoLink);
-			ad.remove(delete);
 			ad.remove(insert);
+			ad.remove(delete);
 			ad.remove(cajaABC);
-			ad.remove(cajaLinks);
+			ad.remove(panelAbc);
 			cajaABC.setLocation(10, 10);
 			ad.add(cajaABC);
-			cajaLinks.setSize(470, 30);
-			ad.add(cajaLinks);
+			ad.add(panelAbc);
+			ad.setSize(625, 325);
 			ad.setVisible(true);
 			return;
 		}
@@ -402,14 +438,13 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			cajaABC.grabFocus();
 			return;
 		}
-		if(e.getSource()==cajaABC && frame==2){
+		if(e.getSource()==cajaABC && (frame==2 || frame==3)){
 			if(cajaABC.getSelectedIndex()==0){
-				cajaLinks.removeAllItems();
-				cajaLinks.insertItemAt("Links", 0);
-				cajaLinks.setSelectedIndex(0);
+				modelAbc.setRowCount(0);
 				return;
 			}
-				
+			
+			bandera=false;
 			ordenaCaja();			
 			return;
 		}
@@ -417,31 +452,44 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			if(cajaABC.getSelectedIndex()==0){
 				JOptionPane.showMessageDialog(null, "Seleccione un estado");
 				return;
-			}				
+			}			
 			
-			int res = JOptionPane.showConfirmDialog(null, "Realmente deseas eliminar\n"+cajaLinks.getSelectedItem()+" ?", "Advertencia", JOptionPane.YES_NO_OPTION);
-			if (res == 0){
-				sql = "DELETE FROM periodicos WHERE nombre = '"+cajaLinks.getSelectedItem()+"' AND id_estado = "+cajaABC.getSelectedIndex();
-				try{
-					con.setQuery(sql);
-					ordenaCaja();
-					JOptionPane.showMessageDialog(null, "Pagina eliminada");
-				}catch(Exception ex){
-					JOptionPane.showMessageDialog(null, "Error al eliminar\n"+cajaLinks.getSelectedItem());
-				}
+			if(!bandera){
+				JOptionPane.showMessageDialog(null, "Seleccione un link");
+				return;
 			}
+			
+			borraRegistro();
 			return;
 		}
 	}
 	
 	private void ordenaCaja() {
 		paginas(cajaABC.getSelectedIndex());
-		cajaLinks.removeAllItems();
+		modelAbc.setRowCount(0);
 		for(int i=0;i<paginas.size();i++){
-			cajaLinks.addItem(paginas.elementAt(i));
+			agregaAbc = new Vector<Object>(0, 1);
+			agregaAbc.add(i+1);
+			agregaAbc.add(paginas.elementAt(i));
+			modelAbc.addRow(agregaAbc);
 		}
 	}
 
+	private void borraRegistro() {
+		int res = JOptionPane.showConfirmDialog(null, "Realmente deseas eliminar\n"+paginas.elementAt(reglon)+" ?", "Advertencia", JOptionPane.YES_NO_OPTION);
+		if (res == 0){
+			sql = "DELETE FROM periodicos WHERE nombre = '"+paginas.elementAt(reglon)+"' AND id_estado = "+cajaABC.getSelectedIndex();
+			try{
+				con.setQuery(sql);
+				ordenaCaja();
+				bandera=false;
+				JOptionPane.showMessageDialog(null, "Pagina eliminada");
+			}catch(Exception ex){
+				JOptionPane.showMessageDialog(null, "Error al eliminar\n"+paginas.elementAt(tablaAbc.getSelectedRow()));
+			}
+		}		
+	}
+	
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2){
 			if (e.getSource() == Tabla) {
@@ -451,9 +499,24 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 				}catch(Exception err){
 					JOptionPane.showMessageDialog(null,"Error: "+err);
 				}
-			}	
-		}	
+				return;
+			}
+			if(e.getSource()==tablaAbc && frame==2){
+				reglon = tablaAbc.getSelectedRow();
+				bandera=true;
+				borraRegistro();
+				return;
+			}
+			return;
+		}
+		if(e.getSource()==tablaAbc && frame==2){
+			reglon = tablaAbc.getSelectedRow();
+			bandera=true;
+			return;
+		}
 	}
+	
+
 	public void mouseEntered(MouseEvent arg0){}
 	public void mouseExited(MouseEvent arg0){}
 	public void mousePressed(MouseEvent arg0){}
@@ -473,9 +536,8 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		}
 		if(arg0.getSource()==ad){
 			cajaABC.setSelectedIndex(0);
-			cajaLinks.removeAllItems();
-			cajaLinks.insertItemAt("Links", 0);
-			cajaLinks.setSelectedIndex(0);
+			modelAbc.setRowCount(0);
+			bandera=false;
 		}
 	}
 	@Override
