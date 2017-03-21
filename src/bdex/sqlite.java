@@ -10,18 +10,17 @@ import java.util.Vector;
 public class sqlite {
 	Vector<String> aux = new Vector<String>(0, 1);
     Connection connection = null;
-    Statement statement, statementDos;
-    ResultSet rs, rd;
+    Statement statement;
+    ResultSet rs;
     
 	public sqlite(){    
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 	    	connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
 	    	statement = connection.createStatement();
-	    	statementDos = connection.createStatement();
 	    	//statement.executeUpdate("create table if not exists estados (id_estado integer, nombre string)");
 	    	statement.executeUpdate("create table if not exists periodicos (nombre string, id_estado integer, UNIQUE(nombre))");
-	    	rs = statementDos.executeQuery("select count(*) from periodicos");
+	    	rs = statement.executeQuery("select count(*) from periodicos");
 	    	if(rs.getInt(1)==0){
 	    		//statement.executeUpdate("insert into estados values (1, 'Aguascalientes'),(2, 'Baja California'), (3, 'Baja California Sur'), (4, 'Campeche'), (5, 'Coahuila'),(6, 'Colima'), (7, 'Chiapas'), (8, 'Chihuahua'), (9, 'CDMX'), (10, 'Durango'), (11, 'Guanajuato'), (12, 'Guerrero'), (13, 'Hidalgo'), (14, 'Jalisco'), (15, 'Edo de México'), (16, 'Michoacán'), (17, 'Morelos'), (18, 'Nayarit'), (19, 'Nuevo León'), (20, 'Oaxaca'), (21, 'Puebla'), (22, 'Querétaro'), (23, 'Quintana Roo'), (24, 'San Luis Potosí'), (25, 'Sinaloa'), (26, 'Sonora'), (27, 'Tabasco'), (28, 'Tamaulipas'), (29, 'Tlaxcala'), (30, 'Veracruz'), (31, 'Yucatán'), (32, 'Zacatecas');");
 	    		statement.executeUpdate("insert into periodicos values ('http://eleconomista.com.mx/estados/', 9), ('http://www.jornada.unam.mx/ultimas/estados/', 9), ('http://www.proceso.com.mx/', 14), ('http://www.proceso.com.mx/category/nacional', 9), ('http://www.milenio.com/estados/', 9), ('http://www.cronica.com.mx/', 9), ('http://www.eluniversal.com.mx/estados', 9), ('http://www.elsoldetoluca.com.mx/', 16), ('http://8columnas.com.mx/', 16), ('http://www.elsoldehidalgo.com.mx/', 13), ('http://www.elsoldetulancingo.com.mx/', 13), ('http://www.elsoldecuautla.com.mx/', 17), ('http://www.elsoldecuernavaca.com.mx/', 17), ('https://www.diariodequeretaro.com.mx/', 22),"
@@ -50,8 +49,6 @@ public class sqlite {
 	    			+ "('http://www.elfaromx.com/', 14),('http://pagina24zacatecas.com.mx/', 32),('http://www.diariopuntual.com/noticias', 21),('http://www.diariodf.mx/', 9),('http://durango.notigram.com/', 10),('http://www.lajornadazacatecas.com.mx/', 32),('http://www.ljz.mx', 32),('http://www.diarioeyipantla.com/', 30),('http://desdelared.com.mx/', 1),('http://informadorbcs.com/', 3),('http://monitoreconomico.org/noticias/', 2),('http://noticabos.org/', 3),('http://www.campeche.com.mx/', 4),('http://lavozdecoatzacoalcos.com.mx/', 27),('http://diariolavozdelsureste.com/chiapas/', 7),('http://lavozdetapachula.com/', 7),('http://lavozdecomitan.com/', 7),"
 	    			+ "('http://expresszacatecas.com/', 32),('http://www.sie7edechiapas.com/', 7),('http://puentelibre.mx/', 8),('http://elheraldodesaltillo.mx/', 5),('http://www.colimanoticias.com/', 6),('http://angelguardian.mx/', 6),('http://colimapm.com/', 6),('http://impacto.mx/', 9),('http://impacto.mx/seccion-alarma', 9),('http://heraldoleon.mx/', 19),('http://periodicocorreo.com.mx/', 11),('http://www.red-noticias.com/', 12),('http://www.novedadesacapulco.mx/', 12),('http://www.diariovialibre.com.mx/', 13),('http://www.diariodelashuastecas.com/principal/', 13),('http://www.cronicahidalgo.com/', 13),('http://abcdezihuatanejo.com/', 12),"
 	    			+ "('http://redesdelsur.com.mx/2016/', 12),('http://noticiasdemichoacan.com/', 16),('http://elregional.com.mx/', 17),('http://www.eltiempodenayarit.mx/', 18),('http://www.elhorizonte.mx/', 19),('http://reporteindigo.com/', 19);");
-	    	}else{
-	    		System.out.println("Periodicos: "+rs.getInt(1));
 	    	}
 	    }catch(Exception e){
 	    	System.err.println(e.getMessage());
@@ -82,5 +79,10 @@ public class sqlite {
     	}catch(SQLException e){
     		System.err.println(e);
     	}
+	}
+	
+	public int getTotal() throws SQLException{
+		rs = statement.executeQuery("select count(*) from periodicos");
+		return rs.getInt(1);
 	}
 }

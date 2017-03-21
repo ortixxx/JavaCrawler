@@ -21,6 +21,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	static JTextField clave, nuevoLink;
 	static JButton buscar, insert, delete;
 	static Bar barra;
+	static omitir omitidos = new omitir();
 	static JComboBox<String> caja, cajaABC;
 	static String[] estadosABC = new String[]{"Aguascalientes","Baja California","Baja California Sur","Campeche","Coahuila","Colima","Chiapas","Chihuahua","CDMX","Durango","Guanajuato","Guerrero","Hidalgo","Jalisco","Edo de México","Michoacán","Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas"};
 	static sqlite con = new sqlite();
@@ -28,7 +29,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	static UrlValidator validar = new UrlValidator();
 	Thread [] hilos, aux;
 	Main [] inicio;
-	Main model = new Main();
+	Main maind = new Main();
 	Vector<String> otras = new Vector<String>(), otrasUrls = new Vector<String>(), dos = new Vector<String>(0, 1);
 	JTable Tabla, tablaAbc;
 	JScrollPane Consulta, scrollAbc;
@@ -183,9 +184,9 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setVisible(true);
+		setVisible(true);		
 	}
-	
+
 	private void listeners() {
 		clave.addActionListener(this);
 		buscar.addActionListener(this);
@@ -217,9 +218,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		caja.setMaximumRowCount(10);
 		caja.setBounds(360, 14, 110, 27);
 		add(caja);
-	}
-
-	
+	}	
 	
 	public void paginas(int estado){
 		paginas.clear();
@@ -248,6 +247,10 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 					hilos[j+(i*pags)].start();
 				}
 			}
+		}else{
+			buscar.setEnabled(true);
+			barra.setMax(barra.getMaximum());
+			JOptionPane.showMessageDialog(null, "Busqueda finalizada\nEncontrados: 0");
 		}
 	}
 
@@ -256,7 +259,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		String nuevo = "";
 		for(int i=0;i<s.length();i++){
 			if(s.charAt(i)==' ' && bandera == 0){
-				if(nuevo.length()!=0){
+				if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo))){
 					dos.add(nuevo);
 				}
 				nuevo="";
@@ -267,7 +270,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 				continue;
 			}else{
 				if(s.charAt(i)=='"' && comillas<1){
-					if(nuevo.length()!=0){
+					if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo))){
 						dos.add(nuevo);
 					}
 					nuevo="";
@@ -281,14 +284,14 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 					}
 					comillas=0;
 					bandera=0;
-					if(nuevo.length()!=0){
+					if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo))){
 						dos.add(nuevo);
 					}
 					nuevo="";
 				}
 			}
 		}
-		if(nuevo.length()!=0){
+		if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo))){
 			dos.add(nuevo);
 		}
 	}
@@ -403,6 +406,11 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		}
 		if(e.getSource()==consultar){
 			frame=3;
+			/*try{
+				System.out.println("Total de periodicos: "+con.getTotal());
+			}catch(SQLException ex){
+				
+			}	*/		
 			ad.remove(nuevoLink);
 			ad.remove(insert);
 			ad.remove(delete);
@@ -425,6 +433,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 						nuevoLink.setText("http://...");
 						cajaABC.setSelectedIndex(0);
 						JOptionPane.showMessageDialog(null, "Pagina agregada");
+						System.out.println("Total de periodicos: "+con.getTotal());
 					} catch (SQLException ex) {
 						JOptionPane.showMessageDialog(null, "Eror al agregar\n"+nuevoLink.getText());
 					}
@@ -484,6 +493,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 				ordenaCaja();
 				bandera=false;
 				JOptionPane.showMessageDialog(null, "Pagina eliminada");
+				System.out.println("Total de periodicos: "+con.getTotal());
 			}catch(Exception ex){
 				JOptionPane.showMessageDialog(null, "Error al eliminar\n"+paginas.elementAt(tablaAbc.getSelectedRow()));
 			}

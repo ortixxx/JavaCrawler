@@ -34,7 +34,7 @@ public class Main implements Runnable{
 	public Main(String st,String cl, int n){
 		nivel = n;
 		sitio = st;
-		clave = cl;
+		clave = acentos(cl);
 	}
 	
 	public Main(){
