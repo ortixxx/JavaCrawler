@@ -70,8 +70,8 @@ public class Main implements Runnable{
 		}
 			
 		extrae();
-		System.out.println("MurioHilo: "+(y++));
-		//y++;		
+		//System.out.println("MurioHilo: "+(y++));
+		y++;		
 		if((y != z && nivel == 0) || (y != z-1 && nivel==1)){
 			usuario.getBarra().setValue(y);
 	    }else{
@@ -133,13 +133,13 @@ public class Main implements Runnable{
 			}
 			
 			uotro = new Vector<Object>();
-			//System.out.println("Nivel: "+nivel+"\n#"+x+"\n************************************\n");
+			//System.out.println("***************************************************");
 			uotro.add(x++);
 			
 			try {
 				c = ImageIO.read(new URL(mte.getImage()).openStream());
 				uotro.add(new ImageIcon(getScaledImage(c, (c.getWidth()*80)/c.getHeight(), 80)));
-			}catch (IOException e) {
+			}catch (Exception e) {
 				uotro.add(foto);
 			}
 			

@@ -11,7 +11,7 @@ import bdex.sqlite;
 
 public class MetaTagsExtractor {
 	public static String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
-	public String title, aux, des, img, date;
+	public String title, aux, des, img, date, ico;
 	public Element metaTag;
 	public Document doc;
 	public Elements hrefs;
@@ -97,6 +97,13 @@ public class MetaTagsExtractor {
         			this.img = null;
         		}
         	}
+        }
+        
+        try{
+        	metaTag = doc.select("link[href*=.ico]").first();
+        	this.ico = metaTag.attr("abs:href");
+        }catch(Exception e){
+        	this.ico = null;
         }
     }
     

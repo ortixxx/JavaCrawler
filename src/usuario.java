@@ -424,6 +424,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			return;
 		}
 		if(e.getSource()==insert || (e.getSource()==nuevoLink && cajaABC.getSelectedIndex()!=0)){
+			//Si el TextField se cambia por TextBox aqui debe de haber un metodo ANTES de pasar al siguiente IF y antes debe de haber un ciclo para cada evento y que se resuelva independiente
 			if(validar.isValid(nuevoLink.getText())){
 				int res = JOptionPane.showConfirmDialog(null, "Se agregara: \n"+nuevoLink.getText()+" -> "+cajaABC.getSelectedItem()+"\nes correcto?", "Mensaje de confirmacion", JOptionPane.YES_NO_OPTION);
 				if (res == 0){
@@ -515,6 +516,14 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 				reglon = tablaAbc.getSelectedRow();
 				bandera=true;
 				borraRegistro();
+				return;
+			}
+			if(e.getSource()==tablaAbc && frame==3){
+				try{
+					Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + paginas.elementAt(tablaAbc.getSelectedRow()));
+				}catch(Exception err){
+					JOptionPane.showMessageDialog(null,"Error: "+err);
+				}
 				return;
 			}
 			return;
