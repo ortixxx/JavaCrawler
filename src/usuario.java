@@ -4,6 +4,7 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import bdex.sqlite;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -13,12 +14,13 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	static JDialog ad;
 	static JMenuBar menuBar;
 	static JMenu sistem, search;
-	static JMenuItem consultar, agregar, borrar, importar, exportar, salir, start, stop, pause, nivelDos;
+	static JMenuItem consultar, agregar, agregarMas, borrar, importar, exportar, salir, start, stop, pause, nivelDos;
 	static Vector<String> paginas = new Vector<String>(0, 1);
 	static Vector<Object> agregaAbc;
 	static boolean bandera=false;
-	static int multiplo=0, pags=0, frame = 0, reglon;
+	static int multiplo=0, pags=0, frame = 0, reglon, error=0;
 	static JTextField clave, nuevoLink;
+	static JTextArea area;
 	static JButton buscar, insert, delete;
 	static Bar barra;
 	static omitir omitidos = new omitir();
@@ -26,14 +28,15 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	static String[] estadosABC = new String[]{"Aguascalientes","Baja California","Baja California Sur","Campeche","Coahuila","Colima","Chiapas","Chihuahua","CDMX","Durango","Guanajuato","Guerrero","Hidalgo","Jalisco","Edo de México","Michoacán","Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas"};
 	static sqlite con = new sqlite();
 	static String sql, actual = " ";
+	static StringTokenizer token;
 	static UrlValidator validar = new UrlValidator();
 	Thread [] hilos, aux;
 	Main [] inicio;
 	Main maind = new Main();
 	Vector<String> otras = new Vector<String>(), otrasUrls = new Vector<String>(), dos = new Vector<String>(0, 1);
 	JTable Tabla, tablaAbc;
-	JScrollPane Consulta, scrollAbc;
-	JPanel PanelTabla, panelAbc;
+	JScrollPane Consulta, scrollAbc, scrollInsert;
+	JPanel PanelTabla, panelAbc, panelInsert;
 	DefaultTableModel modelAbc;
 	
 	public usuario(){
@@ -44,6 +47,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	public void interfaz(){
 	    sistem = new JMenu("Sistema");
 	    agregar = new JMenuItem("Agregar Pagina");
+	    agregarMas = new JMenuItem("Agregar mas...");
 	    borrar = new JMenuItem("Borrar Pagina");
 	    consultar = new JMenuItem("Consultar");
 	    importar = new JMenuItem("Importar", new ImageIcon("icon/import-icon.png"));
@@ -58,6 +62,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	    
 	    sistem.setMnemonic(KeyEvent.VK_S);
 	    	agregar.setMnemonic(KeyEvent.VK_A);
+	    	agregarMas.setMnemonic(KeyEvent.VK_M);
 	    	borrar.setMnemonic(KeyEvent.VK_B);
 	    	consultar.setMnemonic(KeyEvent.VK_C);
 	    	importar.setMnemonic(KeyEvent.VK_I);
@@ -70,6 +75,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	    menuBar = new JMenuBar();
 	    menuBar.add(sistem);
 	    	sistem.add(agregar);
+	    	sistem.add(agregarMas);
 	    	sistem.add(borrar);
 	    	sistem.add(consultar);
 	    	sistem.addSeparator();
@@ -119,9 +125,24 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		PanelTabla.add(Consulta, BorderLayout.CENTER);
 		add(PanelTabla);
 		
-		nuevoLink = new JTextField("http://...");
+		nuevoLink = new JTextField();
 		nuevoLink.setBounds(10, 10, 340, 30);
-		nuevoLink.selectAll();
+		nuevoLink.addFocusListener(new FocusListener(){
+			@Override
+		    public void focusGained(FocusEvent e) {
+		        if (nuevoLink.getText().equals("http://...")){
+		        	nuevoLink.setText("");
+		            nuevoLink.setForeground(Color.BLACK);
+		        }
+		    }
+		    @Override
+		    public void focusLost(FocusEvent e){
+		        if (nuevoLink.getText().isEmpty()) {
+		        	nuevoLink.setForeground(Color.GRAY);
+		        	nuevoLink.setText("http://...");
+		        }
+		    }
+		});
 		
 		cajaABC = new JComboBox<String>(estadosABC);
 		cajaABC.insertItemAt("Estados", 0);
@@ -163,7 +184,17 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		panelAbc.setLayout(new BorderLayout());
 		panelAbc.setBounds(140, 10, 470, 277);
 		panelAbc.add(scrollAbc, BorderLayout.CENTER);
-				
+		
+		area = new JTextArea();
+		area.setFont(nuevoLink.getFont());
+		
+		scrollInsert = new JScrollPane(area);
+			
+		panelInsert = new JPanel();
+		panelInsert.setLayout(new BorderLayout());
+		panelInsert.setBounds(10, 10, 340, 240);
+		panelInsert.add(scrollInsert, BorderLayout.CENTER);
+		
 		insert = new JButton("Agregar");
 		insert.setBounds(490, 9, 120, 32);
 		
@@ -192,6 +223,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		buscar.addActionListener(this);
 		
 		agregar.addActionListener(this);
+		agregarMas.addActionListener(this);
 	    borrar.addActionListener(this);
 	    consultar.addActionListener(this);
 	    salir.addActionListener(this);
@@ -379,23 +411,29 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		}
 		if(e.getSource()==agregar){
 			frame=1;
-			ad.remove(cajaABC);
-			ad.remove(delete);
-			ad.remove(panelAbc);
+			removeAd();
 			ad.add(nuevoLink);
 			cajaABC.setLocation(360, 10);
 			ad.add(cajaABC);
 			ad.add(insert);
-			ad.setSize(625, 80);
+			ad.setSize(625, 78);
+			ad.setVisible(true);
+			return;
+		}
+		if(e.getSource()==agregarMas){
+			frame=4;
+			removeAd();
+			cajaABC.setLocation(360, 10);
+			ad.add(cajaABC);
+			ad.add(insert);
+			ad.add(panelInsert);
+			ad.setSize(625, 288);
 			ad.setVisible(true);
 			return;
 		}
 		if(e.getSource()==borrar){
-			frame=2;			
-			ad.remove(cajaABC);
-			ad.remove(insert);
-			ad.remove(nuevoLink);
-			ad.remove(panelAbc);
+			frame=2;
+			removeAd();			
 			cajaABC.setLocation(10, 10);
 			ad.add(cajaABC);
 			ad.add(panelAbc);
@@ -410,12 +448,8 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 				System.out.println("Total de periodicos: "+con.getTotal());
 			}catch(SQLException ex){
 				
-			}	*/		
-			ad.remove(nuevoLink);
-			ad.remove(insert);
-			ad.remove(delete);
-			ad.remove(cajaABC);
-			ad.remove(panelAbc);
+			}	*/
+			removeAd();			
 			cajaABC.setLocation(10, 10);
 			ad.add(cajaABC);
 			ad.add(panelAbc);
@@ -423,30 +457,50 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			ad.setVisible(true);
 			return;
 		}
-		if(e.getSource()==insert || (e.getSource()==nuevoLink && cajaABC.getSelectedIndex()!=0)){
-			//Si el TextField se cambia por TextBox aqui debe de haber un metodo ANTES de pasar al siguiente IF y antes debe de haber un ciclo para cada evento y que se resuelva independiente
-			if(validar.isValid(nuevoLink.getText())){
-				int res = JOptionPane.showConfirmDialog(null, "Se agregara: \n"+nuevoLink.getText()+" -> "+cajaABC.getSelectedItem()+"\nes correcto?", "Mensaje de confirmacion", JOptionPane.YES_NO_OPTION);
-				if (res == 0){
-					sql = "INSERT OR IGNORE INTO periodicos VALUES ('"+nuevoLink.getText()+"', "+cajaABC.getSelectedIndex()+")";
-					try {
-						con.setQuery(sql);
-						nuevoLink.setText("http://...");
-						cajaABC.setSelectedIndex(0);
-						JOptionPane.showMessageDialog(null, "Pagina agregada");
-						System.out.println("Total de periodicos: "+con.getTotal());
-					} catch (SQLException ex) {
-						JOptionPane.showMessageDialog(null, "Eror al agregar\n"+nuevoLink.getText());
-					}
-				}				
+		if((e.getSource()==insert || e.getSource()==nuevoLink ) && frame==1 && cajaABC.getSelectedIndex()!=0){
+			error=0;
+			if(agregarUrl(nuevoLink.getText())){
+				nuevoLink.setText("");
+				cajaABC.setSelectedIndex(0);
+				JOptionPane.showMessageDialog(null, "Pagina agregada");
 			}else{
-				JOptionPane.showMessageDialog(null, "URL no válida");
+				if(error==1)
+					JOptionPane.showMessageDialog(null, "URL no válida");
+				else
+					if (error==2)
+						JOptionPane.showMessageDialog(null, "Eror al agregar\n"+nuevoLink.getText());
 			}
 			return;
 		}
+		if((e.getSource()==insert || e.getSource()==nuevoLink ) && frame==1 && cajaABC.getSelectedIndex()==0){
+			cajaABC.grabFocus();
+			JOptionPane.showMessageDialog(null, "Seleccione un estado");
+			return;
+		}			
 		if(e.getSource()==nuevoLink && cajaABC.getSelectedIndex()==0){
 			cajaABC.grabFocus();
 			return;
+		}
+		if(e.getSource()==insert && frame==4){
+			paginas.clear();
+			String erro;
+			token = new StringTokenizer(area.getText());
+			while(token.hasMoreTokens()){
+				if(!agregarUrl(erro = token.nextToken())){
+					paginas.add(erro);
+				}
+		    }
+			if(paginas.size() != 0){
+				JOptionPane.showMessageDialog(null, "Paginas agregadas, errores: "+ paginas.size());			
+				area.setText(paginas.toString());
+				area.setText(area.getText().replaceAll("[", ""));
+				area.setText(area.getText().replaceAll(",", "\n"));
+				area.setText(area.getText().replaceAll("]", ""));				
+			}else{
+				JOptionPane.showMessageDialog(null, "Paginas agregadas");
+				area.setText("");
+			}
+			cajaABC.setSelectedIndex(0);
 		}
 		if(e.getSource()==cajaABC && (frame==2 || frame==3)){
 			if(cajaABC.getSelectedIndex()==0){
@@ -474,6 +528,35 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		}
 	}
 	
+	private boolean agregarUrl(String s) {		
+		if(validar.isValid(s)){
+			int res = JOptionPane.showConfirmDialog(null, "Se agregara: \n"+s+" -> "+cajaABC.getSelectedItem()+"\nes correcto?", "Mensaje de confirmacion", JOptionPane.YES_NO_OPTION);
+			if (res == 0){
+				sql = "INSERT OR IGNORE INTO periodicos VALUES ('"+s+"', "+cajaABC.getSelectedIndex()+")";
+				try {
+					con.setQuery(sql);					
+					System.out.println("Total de periodicos: "+con.getTotal());
+				} catch (SQLException ex) {
+					error=2;
+					return false;
+				}
+				return true;
+			}
+		}else{
+			error=1;
+		}		
+		return false;				
+	}
+
+	private void removeAd() {
+		ad.remove(delete);
+		ad.remove(cajaABC);
+		ad.remove(insert);
+		ad.remove(nuevoLink);
+		ad.remove(panelAbc);
+		ad.remove(panelInsert);
+	}
+
 	private void ordenaCaja() {
 		paginas(cajaABC.getSelectedIndex());
 		modelAbc.setRowCount(0);
@@ -554,6 +637,8 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			}
 		}
 		if(arg0.getSource()==ad){
+			nuevoLink.setText("");
+			area.setText("");
 			cajaABC.setSelectedIndex(0);
 			modelAbc.setRowCount(0);
 			bandera=false;
