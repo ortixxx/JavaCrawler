@@ -17,7 +17,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	static JMenuItem consultar, agregar, agregarMas, borrar, importar, exportar, salir, start, stop, pause, nivelDos;
 	static Vector<String> paginas = new Vector<String>(0, 1);
 	static Vector<Object> agregaAbc;
-	static boolean bandera=false;
+	static boolean bandera=false, iniciado=false;
 	static int multiplo=0, pags=0, frame = 0, reglon, error=0;
 	static JTextField clave, nuevoLink;
 	static JTextArea area;
@@ -245,7 +245,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 
 	public void box(){		
 		caja=new JComboBox<String>(estadosABC);
-		caja.insertItemAt("Estados", 0);
+		caja.insertItemAt("Todos", 0);
 		caja.setSelectedIndex(0);
 		caja.setMaximumRowCount(10);
 		caja.setBounds(360, 14, 110, 27);
@@ -374,15 +374,19 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	@SuppressWarnings("deprecation")
 	public void actionPerformed(ActionEvent e){
 		if(e.getSource()==buscar || e.getSource()==clave || e.getSource()==start){
+			iniciado=true;
 			if(caja.getSelectedIndex()==0){
-				JOptionPane.showMessageDialog(null, "Seleccione un estado");
+				int o = JOptionPane.showConfirmDialog(null, "Se buscara en todos los estados y se desactivara el 2do nivel de busqueda\nRealmente deseas continuar?", "Precaución", JOptionPane.YES_NO_OPTION);
+				if (o == 0){
+					//New Meta
+				}				
 				return;
 			}
 			paginas(caja.getSelectedIndex());
 			buscar();			
 			return;
 		}
-		if(e.getSource()==stop){
+		if(e.getSource()==stop && iniciado){
 			buscar.setEnabled(true);
 			barra.setValue(barra.getMaximum());
 			for(int i=0; i<hilos.length;i++){
@@ -399,6 +403,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 					continue;
 				}
 			}
+			iniciado=false;
 			return;
 		}
 		if(e.getSource()==salir){
@@ -492,10 +497,9 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		    }
 			if(paginas.size() != 0){
 				JOptionPane.showMessageDialog(null, "Paginas agregadas, errores: "+ paginas.size());			
-				area.setText(paginas.toString());
-				area.setText(area.getText().replaceAll("[", ""));
-				area.setText(area.getText().replaceAll(",", "\n"));
-				area.setText(area.getText().replaceAll("]", ""));				
+				for(int i=0;i<paginas.size(); i++){
+					area.append(paginas.elementAt(i)+"\n");
+				}				
 			}else{
 				JOptionPane.showMessageDialog(null, "Paginas agregadas");
 				area.setText("");
@@ -630,7 +634,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	@Override
 	public void windowClosing(WindowEvent arg0){
 		if(arg0.getSource()==this){
-			int o = JOptionPane.showConfirmDialog(null, "Realmente deseas salir?", "Advertencia", JOptionPane.YES_NO_OPTION);
+			int o = JOptionPane.showConfirmDialog(null, "Realmente desea salir?", "Advertencia", JOptionPane.YES_NO_OPTION);
 			if (o == 0){
 				con.dbClose();
 				System.exit(0);

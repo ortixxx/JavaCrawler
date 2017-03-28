@@ -77,6 +77,7 @@ public class Main implements Runnable{
 	    }else{
 	    	usuario.getBarra().setValue(y);
 	    	usuario.getBoton().setEnabled(true);
+	    	//Bandera de terminacion para la busqueda TODOS
 	    	JOptionPane.showMessageDialog(null, "Busqueda finalizada\nEncontrados: "+(x-1));
 	    }
 	}
@@ -167,7 +168,6 @@ public class Main implements Runnable{
 			if(nivel == 0 && (z+nuevaPags.size())<300 && ((JCheckBoxMenuItem)usuario.getNivelDos()).getState()){
 				luz.Verde();
 				z += nuevaPags.size();
-				nuevaPags = new Vector<String>(0, 1);
 				hilos = new Thread[nuevaPags.size()];
 				inicio = new Main[nuevaPags.size()];
 				usuario.getBarra().setMax(z);
@@ -199,6 +199,7 @@ public class Main implements Runnable{
 		model.setRowCount(0);
 		noticias.clear();
 		urls.clear();
+		//Reset bandera de terminacion para la busqueda TODOS
 	}
 	
 	public String acentos(String s){
