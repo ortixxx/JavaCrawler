@@ -1,3 +1,5 @@
+package main;
+
 import java.awt.*;
 import java.awt.image.*;
 import java.io.IOException;
@@ -21,7 +23,7 @@ public class Main implements Runnable{
 	public static LocalDate mark;
 	Thread [] hilos;
 	Main [] inicio;
-	int nivel;
+	int nivel = 0;
 	LocalDate copia;
 	String sitio, clave, texto, titulo, date;
 	Vector<Object> uotro;
@@ -69,7 +71,7 @@ public class Main implements Runnable{
 			z = usuario.getTotal()*usuario.getMultiplo();
 		}
 			
-		extrae();
+		extrae(sitio);
 		//System.out.println("MurioHilo: "+(y++));
 		y++;		
 		if((y != z && nivel == 0) || (y != z-1 && nivel==1)){
@@ -77,17 +79,16 @@ public class Main implements Runnable{
 	    }else{
 	    	usuario.getBarra().setValue(y);
 	    	usuario.getBoton().setEnabled(true);
-	    	//Bandera de terminacion para la busqueda TODOS
 	    	JOptionPane.showMessageDialog(null, "Busqueda finalizada\nEncontrados: "+(x-1));
 	    }
 	}
 	
-	public void extrae(){
+	public void extrae(String s){
 		try {
-			doc = Jsoup.connect(sitio).get();
-			sitio = remove(sitio);
+			doc = Jsoup.connect(s).get();
+			s = remove(s);
 		} catch (IOException e1) {
-			System.out.println("Error de conexion: "+sitio);
+			System.out.println("Error de conexion: "+s);
 			return;
 		}
 		
@@ -107,7 +108,7 @@ public class Main implements Runnable{
 	public void processPage(String URL){
 		luz.Rojo();
 		if(URL.length()>12)
-			if(URL.substring(12, URL.length()-1).contains(sitio)){
+			if(URL.substring(12, URL.length()-1).contains(URL)){
 				luz.Verde();
 				return;
 			}
@@ -165,7 +166,7 @@ public class Main implements Runnable{
 			
 			nuevaPags = mte.getHref();
 			
-			if(nivel == 0 && (z+nuevaPags.size())<300 && ((JCheckBoxMenuItem)usuario.getNivelDos()).getState()){
+			if(nivel == 0 && ((JCheckBoxMenuItem)usuario.getNivelDos()).getState()){
 				luz.Verde();
 				z += nuevaPags.size();
 				hilos = new Thread[nuevaPags.size()];
@@ -199,7 +200,6 @@ public class Main implements Runnable{
 		model.setRowCount(0);
 		noticias.clear();
 		urls.clear();
-		//Reset bandera de terminacion para la busqueda TODOS
 	}
 	
 	public String acentos(String s){

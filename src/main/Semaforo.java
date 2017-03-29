@@ -1,3 +1,4 @@
+package main;
 class Semaforo {
 
 	private int Recursos;

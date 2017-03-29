@@ -1,3 +1,5 @@
+package main;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -8,8 +10,9 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import bdex.sqlite;
 import org.apache.commons.validator.routines.UrlValidator;
+import todos.palabra;
 
-class usuario extends JFrame implements ActionListener, MouseListener, WindowListener{
+public class usuario extends JFrame implements ActionListener, MouseListener, WindowListener{
 	private static final long serialVersionUID = 1L;
 	static JDialog ad;
 	static JMenuBar menuBar;
@@ -30,8 +33,9 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 	static String sql, actual = " ";
 	static StringTokenizer token;
 	static UrlValidator validar = new UrlValidator();
-	Thread [] hilos, aux;
+	Thread [] hilos, aux, hiloNewMeta;
 	Main [] inicio;
+	palabra [] newMeta;
 	Main maind = new Main();
 	Vector<String> otras = new Vector<String>(), otrasUrls = new Vector<String>(), dos = new Vector<String>(0, 1);
 	JTable Tabla, tablaAbc;
@@ -252,25 +256,20 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		add(caja);
 	}	
 	
-	public void paginas(int estado){
+	public static void paginas(int estado){
 		paginas.clear();
 		sql = "select nombre from periodicos where id_estado = "+estado;
 		paginas = con.getQuery(sql);
 	}
 
 	public void buscar(){
-		buscar.setEnabled(false);
-		actual = clave.getText();
-		Main.clearVector();
-		dos.clear();
-		procesa(actual);
+		prep();
 		
 		if(!dos.isEmpty()){
 			multiplo=dos.size();
 			pags = paginas.size();
 			hilos = new Thread[pags*multiplo];
 			inicio = new Main[pags*multiplo];
-			barra.setValue(0);
 			barra.setMax(pags*multiplo);
 			for(int i=0;i<dos.size();i++){
 				for(int j=0;j<pags;j++){
@@ -285,13 +284,22 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 			JOptionPane.showMessageDialog(null, "Busqueda finalizada\nEncontrados: 0");
 		}
 	}
+	
+	public void prep(){
+		buscar.setEnabled(false);
+		actual = clave.getText();
+		barra.setValue(0);
+		Main.clearVector();
+		dos.clear();
+		procesa(actual);
+	}
 
 	public void procesa(String s) {
 		int bandera = 0, comillas = 0;
 		String nuevo = "";
 		for(int i=0;i<s.length();i++){
 			if(s.charAt(i)==' ' && bandera == 0){
-				if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo))){
+				if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo)) && !dos.contains(nuevo)){
 					dos.add(nuevo);
 				}
 				nuevo="";
@@ -302,7 +310,7 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 				continue;
 			}else{
 				if(s.charAt(i)=='"' && comillas<1){
-					if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo))){
+					if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo)) && !dos.contains(nuevo)){
 						dos.add(nuevo);
 					}
 					nuevo="";
@@ -316,14 +324,14 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 					}
 					comillas=0;
 					bandera=0;
-					if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo))){
+					if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo)) && !dos.contains(nuevo)){
 						dos.add(nuevo);
 					}
 					nuevo="";
 				}
 			}
 		}
-		if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo))){
+		if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo)) && !dos.contains(nuevo)){
 			dos.add(nuevo);
 		}
 	}
@@ -371,14 +379,38 @@ class usuario extends JFrame implements ActionListener, MouseListener, WindowLis
 		return nivelDos;
 	}
 	
+	public static String[] getEdoList(){
+		return estadosABC;
+	}
+	
+	public static sqlite getSql(){
+		return con;
+	}
+	
 	@SuppressWarnings("deprecation")
 	public void actionPerformed(ActionEvent e){
 		if(e.getSource()==buscar || e.getSource()==clave || e.getSource()==start){
 			iniciado=true;
 			if(caja.getSelectedIndex()==0){
-				int o = JOptionPane.showConfirmDialog(null, "Se buscara en todos los estados y se desactivara el 2do nivel de busqueda\nRealmente deseas continuar?", "Precaución", JOptionPane.YES_NO_OPTION);
+				int o = JOptionPane.showConfirmDialog(null, "Se buscara en TODOS los estados\nRealmente deseas continuar?", "Precaución", JOptionPane.YES_NO_OPTION);
 				if (o == 0){
-					//New Meta
+					prep();
+					
+					if(!dos.isEmpty()){
+						//barra.setMax(dos.size()*Totaldepaginas);
+						if(!((JCheckBoxMenuItem)nivelDos).getState())
+							((JCheckBoxMenuItem)nivelDos).setSelected(true);
+						
+						newMeta = new palabra[dos.size()];
+						hiloNewMeta = new Thread[dos.size()];
+						for(int i=0;i<dos.size();i++){
+							newMeta[i] = new palabra(dos.elementAt(i));
+							hiloNewMeta[i] = new Thread(newMeta[i]);
+							hiloNewMeta[i].start();
+						}
+					}else{
+						
+					}
 				}				
 				return;
 			}
