@@ -25,7 +25,6 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	static JTextField clave, nuevoLink;
 	static JTextArea area;
 	static JButton buscar, insert, delete;
-	static Bar barra;
 	static omitir omitidos = new omitir();
 	static JComboBox<String> caja, cajaABC;
 	static String[] estadosABC = new String[]{"Aguascalientes","Baja California","Baja California Sur","Campeche","Coahuila","Colima","Chiapas","Chihuahua","CDMX","Durango","Guanajuato","Guerrero","Hidalgo","Jalisco","Edo de México","Michoacán","Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas"};
@@ -48,7 +47,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		interfaz();
 	}
 	
-	public void interfaz(){
+	private void interfaz(){
 	    sistem = new JMenu("Sistema");
 	    agregar = new JMenuItem("Agregar Pagina");
 	    agregarMas = new JMenuItem("Agregar mas...");
@@ -107,9 +106,6 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		
 		box();
 		
-		barra = new Bar();
-		add(barra);
-		
 		Tabla = new JTable(Main.getModel());
 		Tabla.setRowHeight(80);
 		Tabla.getColumnModel().getColumn(0).setMaxWidth(30);
@@ -149,7 +145,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		});
 		
 		cajaABC = new JComboBox<String>(estadosABC);
-		cajaABC.insertItemAt("Estados", 0);
+		cajaABC.insertItemAt("Periodicos", 0);
 		cajaABC.setSelectedIndex(0);
 		cajaABC.setMaximumRowCount(13);
 		cajaABC.setSize(120, 30);
@@ -176,9 +172,9 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	    
 	    tablaAbc = new JTable(modelAbc);
 	    tablaAbc.setRowHeight(25);
-	    tablaAbc.getColumnModel().getColumn(0).setMaxWidth(20);
+	    tablaAbc.getColumnModel().getColumn(0).setMaxWidth(35);
 		tablaAbc.getColumnModel().getColumn(0).setResizable(false);
-	    tablaAbc.getColumnModel().getColumn(1).setMaxWidth(460);
+	    tablaAbc.getColumnModel().getColumn(1).setMaxWidth(445);
 		tablaAbc.getColumnModel().getColumn(1).setResizable(false);
 		tablaAbc.getTableHeader().setReorderingAllowed(false);
 		
@@ -247,7 +243,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		ad.addWindowListener(this);
 	}
 
-	public void box(){		
+	private void box(){
 		caja=new JComboBox<String>(estadosABC);
 		caja.insertItemAt("Todos", 0);
 		caja.setSelectedIndex(0);
@@ -256,13 +252,19 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		add(caja);
 	}	
 	
-	public static void paginas(int estado){
+	private void paginas(int estado){
 		paginas.clear();
-		sql = "select nombre from periodicos where id_estado = "+estado;
-		paginas = con.getQuery(sql);
+		if(estado==0){
+			sql = "select nombre from periodicos";
+			paginas = con.getQuery(sql);
+		}else{
+			sql = "select nombre from periodicos where id_estado = "+estado;
+			paginas = con.getQuery(sql);
+		}
+		
 	}
 
-	public void buscar(){
+	private void buscar(){
 		prep();
 		
 		if(!dos.isEmpty()){
@@ -270,7 +272,6 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			pags = paginas.size();
 			hilos = new Thread[pags*multiplo];
 			inicio = new Main[pags*multiplo];
-			barra.setMax(pags*multiplo);
 			for(int i=0;i<dos.size();i++){
 				for(int j=0;j<pags;j++){
 					inicio[j+(i*pags)] = new Main(paginas.elementAt(j), dos.elementAt(i), 0);
@@ -280,21 +281,19 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			}
 		}else{
 			buscar.setEnabled(true);
-			barra.setMax(barra.getMaximum());
 			JOptionPane.showMessageDialog(null, "Busqueda finalizada\nEncontrados: 0");
 		}
 	}
 	
-	public void prep(){
+	private void prep(){
 		buscar.setEnabled(false);
 		actual = clave.getText();
-		barra.setValue(0);
 		Main.clearVector();
 		dos.clear();
 		procesa(actual);
 	}
 
-	public void procesa(String s) {
+	private void procesa(String s) {
 		int bandera = 0, comillas = 0;
 		String nuevo = "";
 		for(int i=0;i<s.length();i++){
@@ -335,54 +334,67 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			dos.add(nuevo);
 		}
 	}
-	
-	class MultiLineCellRenderer extends JTextArea implements TableCellRenderer {
-		private static final long serialVersionUID = 1L;
 
-		public MultiLineCellRenderer() {
-			setLineWrap(true);
-		    setWrapStyleWord(true);
-		    setOpaque(true);
+	private void removeAd(){
+		ad.remove(delete);
+		ad.remove(cajaABC);
+		ad.remove(insert);
+		ad.remove(nuevoLink);
+		ad.remove(panelAbc);
+		ad.remove(panelInsert);
+	}
+
+	private void ordenaCaja(){
+		paginas(cajaABC.getSelectedIndex());
+		modelAbc.setRowCount(0);
+		for(int i=0;i<paginas.size();i++){
+			agregaAbc = new Vector<Object>(0, 1);
+			agregaAbc.add(i+1);
+			agregaAbc.add(paginas.elementAt(i));
+			modelAbc.addRow(agregaAbc);
 		}
-		
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
-			if (isSelected) {
-			      setForeground(table.getSelectionForeground());
-			      setBackground(table.getSelectionBackground());
-			} else {
-			      setForeground(table.getForeground());
-			      setBackground(table.getBackground());
+	}
+
+	private void borraRegistro(){
+		int res = JOptionPane.showConfirmDialog(null, "Realmente deseas eliminar\n"+paginas.elementAt(reglon)+" ?", "Advertencia", JOptionPane.YES_NO_OPTION);
+		if (res == 0){
+			sql = "DELETE FROM periodicos WHERE nombre = '"+paginas.elementAt(reglon)+"'";
+			try{
+				con.setQuery(sql);
+				ordenaCaja();
+				bandera=false;
+				JOptionPane.showMessageDialog(null, "Pagina eliminada");
+				System.out.println("Total de periodicos: "+con.getTotal());
+			}catch(Exception ex){
+				JOptionPane.showMessageDialog(null, "Error al eliminar\n"+paginas.elementAt(tablaAbc.getSelectedRow()));
 			}
-			setFont(table.getFont());
-			setText((value == null) ? "" : value.toString());
-		    return this;
-		}
+		}		
 	}
 	
-	public static int getTotal(){
-		return paginas.size();
-	}
-	
-	public static Bar getBarra(){
-		return barra;
-	}
-	
-	public static JButton getBoton(){
-		return buscar;
-	}
-	
-	public static int getMultiplo(){
-		return multiplo;
+	private boolean agregarUrl(String s){
+		if(validar.isValid(s)){
+			int res = JOptionPane.showConfirmDialog(null, "Se agregara: \n"+s+" -> "+cajaABC.getSelectedItem()+"\nes correcto?", "Mensaje de confirmacion", JOptionPane.YES_NO_OPTION);
+			if (res == 0){
+				sql = "INSERT OR IGNORE INTO periodicos VALUES ('"+s+"', "+cajaABC.getSelectedIndex()+")";
+				try {
+					con.setQuery(sql);					
+					System.out.println("Total de periodicos: "+con.getTotal());
+				} catch (SQLException ex) {
+					error=2;
+					return false;
+				}
+				return true;
+			}
+		}else{
+			error=1;
+		}		
+		return false;				
 	}
 	
 	public static JMenuItem getNivelDos(){
 		return nivelDos;
 	}
-	
-	public static String[] getEdoList(){
-		return estadosABC;
-	}
-	
+		
 	public static sqlite getSql(){
 		return con;
 	}
@@ -397,7 +409,6 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 					prep();
 					
 					if(!dos.isEmpty()){
-						//barra.setMax(dos.size()*Totaldepaginas);
 						if(!((JCheckBoxMenuItem)nivelDos).getState())
 							((JCheckBoxMenuItem)nivelDos).setSelected(true);
 						
@@ -420,20 +431,9 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		}
 		if(e.getSource()==stop && iniciado){
 			buscar.setEnabled(true);
-			barra.setValue(barra.getMaximum());
 			for(int i=0; i<hilos.length;i++){
 				if(hilos[i].isAlive())
 					hilos[i].stop();
-				
-				try{
-					aux = new Thread[inicio[i].getHilos().length];
-					aux = inicio[i].getHilos();
-					for(int j=0;j<aux.length;j++)
-						if(aux[j].isAlive())
-							aux[j].stop();
-				}catch(Exception ex){
-					continue;
-				}
 			}
 			iniciado=false;
 			return;
@@ -475,6 +475,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			ad.add(cajaABC);
 			ad.add(panelAbc);
 			ad.add(delete);
+			ordenaCaja();
 			ad.setSize(625, 325);
 			ad.setVisible(true);
 			return;
@@ -490,6 +491,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			cajaABC.setLocation(10, 10);
 			ad.add(cajaABC);
 			ad.add(panelAbc);
+			ordenaCaja();
 			ad.setSize(625, 325);
 			ad.setVisible(true);
 			return;
@@ -539,11 +541,6 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			cajaABC.setSelectedIndex(0);
 		}
 		if(e.getSource()==cajaABC && (frame==2 || frame==3)){
-			if(cajaABC.getSelectedIndex()==0){
-				modelAbc.setRowCount(0);
-				return;
-			}
-			
 			bandera=false;
 			ordenaCaja();			
 			return;
@@ -563,63 +560,6 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			return;
 		}
 	}
-	
-	private boolean agregarUrl(String s) {		
-		if(validar.isValid(s)){
-			int res = JOptionPane.showConfirmDialog(null, "Se agregara: \n"+s+" -> "+cajaABC.getSelectedItem()+"\nes correcto?", "Mensaje de confirmacion", JOptionPane.YES_NO_OPTION);
-			if (res == 0){
-				sql = "INSERT OR IGNORE INTO periodicos VALUES ('"+s+"', "+cajaABC.getSelectedIndex()+")";
-				try {
-					con.setQuery(sql);					
-					System.out.println("Total de periodicos: "+con.getTotal());
-				} catch (SQLException ex) {
-					error=2;
-					return false;
-				}
-				return true;
-			}
-		}else{
-			error=1;
-		}		
-		return false;				
-	}
-
-	private void removeAd() {
-		ad.remove(delete);
-		ad.remove(cajaABC);
-		ad.remove(insert);
-		ad.remove(nuevoLink);
-		ad.remove(panelAbc);
-		ad.remove(panelInsert);
-	}
-
-	private void ordenaCaja() {
-		paginas(cajaABC.getSelectedIndex());
-		modelAbc.setRowCount(0);
-		for(int i=0;i<paginas.size();i++){
-			agregaAbc = new Vector<Object>(0, 1);
-			agregaAbc.add(i+1);
-			agregaAbc.add(paginas.elementAt(i));
-			modelAbc.addRow(agregaAbc);
-		}
-	}
-
-	private void borraRegistro() {
-		int res = JOptionPane.showConfirmDialog(null, "Realmente deseas eliminar\n"+paginas.elementAt(reglon)+" ?", "Advertencia", JOptionPane.YES_NO_OPTION);
-		if (res == 0){
-			sql = "DELETE FROM periodicos WHERE nombre = '"+paginas.elementAt(reglon)+"' AND id_estado = "+cajaABC.getSelectedIndex();
-			try{
-				con.setQuery(sql);
-				ordenaCaja();
-				bandera=false;
-				JOptionPane.showMessageDialog(null, "Pagina eliminada");
-				System.out.println("Total de periodicos: "+con.getTotal());
-			}catch(Exception ex){
-				JOptionPane.showMessageDialog(null, "Error al eliminar\n"+paginas.elementAt(tablaAbc.getSelectedRow()));
-			}
-		}		
-	}
-	
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2){
 			if (e.getSource() == Tabla) {
@@ -653,17 +593,12 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			return;
 		}
 	}
-	
-
 	public void mouseEntered(MouseEvent arg0){}
 	public void mouseExited(MouseEvent arg0){}
 	public void mousePressed(MouseEvent arg0){}
 	public void mouseReleased(MouseEvent arg0){}
-	@Override
 	public void windowActivated(WindowEvent arg0){}
-	@Override
 	public void windowClosed(WindowEvent arg0){}
-	@Override
 	public void windowClosing(WindowEvent arg0){
 		if(arg0.getSource()==this){
 			int o = JOptionPane.showConfirmDialog(null, "Realmente desea salir?", "Advertencia", JOptionPane.YES_NO_OPTION);
@@ -680,13 +615,9 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			bandera=false;
 		}
 	}
-	@Override
 	public void windowDeactivated(WindowEvent arg0){}
-	@Override
 	public void windowDeiconified(WindowEvent arg0){}
-	@Override
 	public void windowIconified(WindowEvent arg0){}
-	@Override
 	public void windowOpened(WindowEvent arg0){}	
 	public static void main(String[]args) {
 		String os = System.getProperty("os.name").toLowerCase();
@@ -698,5 +629,28 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		     catch (Exception e) {}
 		}   
 		new usuario();
+	}
+	
+	public class MultiLineCellRenderer extends JTextArea implements TableCellRenderer {
+		private static final long serialVersionUID = 1L;
+
+		public MultiLineCellRenderer() {
+			setLineWrap(true);
+		    setWrapStyleWord(true);
+		    setOpaque(true);
+		}
+		
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
+			if (isSelected) {
+			      setForeground(table.getSelectionForeground());
+			      setBackground(table.getSelectionBackground());
+			} else {
+			      setForeground(table.getForeground());
+			      setBackground(table.getBackground());
+			}
+			setFont(table.getFont());
+			setText((value == null) ? "" : value.toString());
+		    return this;
+		}
 	}
 }

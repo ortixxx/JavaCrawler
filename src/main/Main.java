@@ -19,13 +19,12 @@ public class Main implements Runnable{
 	public static Vector<String> urls = new Vector<String>(0, 1), noticias  = new Vector<String>(0, 1);
 	public static DefaultTableModel model;
 	public static Semaforo luz;
-	public static int x = 1, y = 0, z = 0, bandera=0;
+	public static int x = 1, y = 0;
 	public static LocalDate mark;
-	Thread [] hilos;
-	Main [] inicio;
+	Main rec;
 	int nivel = 0;
 	LocalDate copia;
-	String sitio, clave, texto, titulo, date;
+	String sitio, clave, texto, titulo, date, des;
 	Vector<Object> uotro;
 	Vector<String> nuevaPags;
 	BufferedImage c;
@@ -33,10 +32,10 @@ public class Main implements Runnable{
 	MetaTagsExtractor mte;
 	ImageIcon foto = new ImageIcon("loge.png");
 	
-	public Main(String st,String cl, int n){
-		nivel = n;
+	public Main(String st,String cl, int n){		
 		sitio = st;
 		clave = acentos(cl);
+		nivel = n;
 	}
 	
 	public Main(){
@@ -65,22 +64,10 @@ public class Main implements Runnable{
 		model.addColumn("Noticias");
 	}
 	
-	public void run(){
-		if(nivel==0 && bandera==0){
-			bandera++;
-			z = usuario.getTotal()*usuario.getMultiplo();
-		}
-			
+	public void run(){			
 		extrae(sitio);
-		//System.out.println("MurioHilo: "+(y++));
-		y++;		
-		if((y != z && nivel == 0) || (y != z-1 && nivel==1)){
-			usuario.getBarra().setValue(y);
-	    }else{
-	    	usuario.getBarra().setValue(y);
-	    	usuario.getBoton().setEnabled(true);
-	    	JOptionPane.showMessageDialog(null, "Busqueda finalizada\nEncontrados: "+(x-1));
-	    }
+		System.out.println("MurioHilo: "+(y++));
+		//y++;
 	}
 	
 	public void extrae(String s){
@@ -124,14 +111,18 @@ public class Main implements Runnable{
 			mte = new MetaTagsExtractor(URL);
 			date=mte.getDate();
 			
-			if(!date.equals("No date")){
-				date = mte.getDate().substring(0, 10);
-				copia = LocalDate.of(Integer.parseInt(date.substring(0,4)), Integer.parseInt(date.substring(5,7)), Integer.parseInt(date.substring(8)));
-				if(copia.isBefore(mark)){
-					mte.closeBd();
-					luz.Verde();
-					return;
+			try{
+				if(!date.equals("No date")){
+					date = mte.getDate().substring(0, 10);
+					copia = LocalDate.of(Integer.parseInt(date.substring(0,4)), Integer.parseInt(date.substring(5,7)), Integer.parseInt(date.substring(8)));
+					if(copia.isBefore(mark)){
+						mte.closeBd();
+						luz.Verde();
+						return;
+					}
 				}
+			}catch(Exception w){
+				date="No date";
 			}
 			
 			uotro = new Vector<Object>();
@@ -158,25 +149,25 @@ public class Main implements Runnable{
 	    		luz.Verde();
 	    		return;	    		
 	    	}
-	    		
+	    	
+	    	des=mte.getDes();
+	    	if(des.equals("No description"))
+	    		des=URL;
+	    			    		
 			uotro.add(titulo+"\n"+date+"\n"+mte.getDes());
 			model.addRow(uotro);
 			noticias.add(mte.getTitle());
 			urls.add(URL);	
-			
-			nuevaPags = mte.getHref();
-			
+						
 			if(nivel == 0 && ((JCheckBoxMenuItem)usuario.getNivelDos()).getState()){
 				luz.Verde();
-				z += nuevaPags.size();
-				hilos = new Thread[nuevaPags.size()];
-				inicio = new Main[nuevaPags.size()];
-				usuario.getBarra().setMax(z);
-				for(int i=0;i<nuevaPags.size();i++){					
-					inicio[i] = new Main(gato(nuevaPags.elementAt(i)), clave, 1);
-					hilos[i] = new Thread(inicio[i]);
-					hilos[i].start();
-				}
+				nuevaPags = mte.getHref();
+				System.out.println("Posibles hijos de "+URL+"\n"+nuevaPags.size());
+				rec = new Main(URL, clave, 1);
+				for(int i=0;i<nuevaPags.size();i++){
+					rec.extrae(nuevaPags.elementAt(i));					
+					//System.out.println("Posibles hijos de ");
+				}				
 			}else{
 				luz.Verde();				
 			}
@@ -196,7 +187,6 @@ public class Main implements Runnable{
 	public static void clearVector(){
 		x = 1;
 		y = 0;
-		bandera = 0;
 		model.setRowCount(0);
 		noticias.clear();
 		urls.clear();
@@ -220,13 +210,6 @@ public class Main implements Runnable{
 	public String espacios(String s) {
 		s = s.replace('-', ' ');
 		s = s.replace('_', ' ');
-		return s;
-	}
-	
-	public String gato(String s){
-		if(s.charAt(s.length()-1)=='#'){
-			s = s.substring(0, s.length()-1);
-		}
 		return s;
 	}
 
@@ -255,9 +238,5 @@ public class Main implements Runnable{
 	
 	public static int getX() {
 		return x;
-	}
-	
-	public Thread[] getHilos(){
-		return hilos;
 	}
 }

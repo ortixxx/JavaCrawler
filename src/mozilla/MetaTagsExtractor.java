@@ -18,8 +18,6 @@ public class MetaTagsExtractor {
 	public sqlite queryDos = new sqlite();
 	public Vector<String> semi = new Vector<String>(0, 1), finale = new Vector<String>(0, 1);
 	
-	
-	
     public MetaTagsExtractor(String url) {
     	String link = url;
     	try{
@@ -113,7 +111,7 @@ public class MetaTagsExtractor {
 		semi = queryDos.getQuery(sql);
 		
 		for(Element link : hrefs){
-			if(semi.contains(link.attr("abs:href")) || link.attr("abs:href").length()==0 || link.attr("abs:href").contains("facebook") || link.attr("abs:href").contains("twitter") || link.attr("abs:href").contains("google") || link.attr("abs:href").contains("youtube") || link.attr("abs:href").contains("pinterest") || link.attr("abs:href").contains("instagram") || link.attr("abs:href").contains("whatsapp"))
+			if(semi.contains(link.attr("abs:href")) || link.attr("abs:href").length()==0 || link.attr("abs:href").contains("facebook") || link.attr("abs:href").contains("twitter") || link.attr("abs:href").contains("google") || link.attr("abs:href").contains("youtube") || link.attr("abs:href").contains("pinterest") || link.attr("abs:href").contains("instagram") || link.attr("abs:href").contains("whatsapp") || link.attr("abs:href").contains("yahoo") || link.attr("abs:href").contains("reddit")|| link.attr("abs:href").contains("#"))
 				continue;
 			
 			finale.add(link.attr("abs:href"));
