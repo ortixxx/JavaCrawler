@@ -23,6 +23,7 @@ public class Main implements Runnable{
 	public static LocalDate mark;
 	Main rec;
 	int nivel = 0;
+	String[]omitir;
 	LocalDate copia;
 	String sitio, clave, texto, titulo, date, des;
 	Vector<Object> uotro;
@@ -66,8 +67,8 @@ public class Main implements Runnable{
 	
 	public void run(){			
 		extrae(sitio);
-		System.out.println("MurioHilo: "+(y++));
-		//y++;
+		//System.out.println("MurioHilo: "+(y++));
+		y++;
 	}
 	
 	public void extrae(String s){
@@ -99,12 +100,13 @@ public class Main implements Runnable{
 				luz.Verde();
 				return;
 			}
-				
-			
-		if(URL.contains("facebook") || URL.contains("google") || URL.contains("twitter") || URL.contains("youtube") || URL.contains("pinterest") || URL.contains("instagram") || URL.contains("whatsapp")){
-			luz.Verde();
-			return;
-		}
+		
+		omitir = MetaTagsExtractor.getOmitidos();
+		for(int i=0;i<omitir.length;i++)
+			if(URL.contains(omitir[i])){
+				luz.Verde();
+				return;
+			}
 			
 		
 		if(!urls.contains(URL)){
@@ -162,11 +164,9 @@ public class Main implements Runnable{
 			if(nivel == 0 && ((JCheckBoxMenuItem)usuario.getNivelDos()).getState()){
 				luz.Verde();
 				nuevaPags = mte.getHref();
-				System.out.println("Posibles hijos de "+URL+"\n"+nuevaPags.size());
 				rec = new Main(URL, clave, 1);
 				for(int i=0;i<nuevaPags.size();i++){
-					rec.extrae(nuevaPags.elementAt(i));					
-					//System.out.println("Posibles hijos de ");
+					rec.extrae(nuevaPags.elementAt(i));
 				}				
 			}else{
 				luz.Verde();				

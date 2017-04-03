@@ -17,6 +17,7 @@ public class MetaTagsExtractor {
 	public Elements hrefs;
 	public sqlite queryDos = new sqlite();
 	public Vector<String> semi = new Vector<String>(0, 1), finale = new Vector<String>(0, 1);
+	public static String[] sitiosOmitidos=new String[]{"facebook", "twitter", "hashtag", "google", "myspace", "youtube", "pinterest", "instagram", "tumblr.", "whatsapp", "line.", "yahoo", "reddit", "linkedin", "digg.", "stumbleupon", "disqus", "publimetro", "flipboard", "addtoany", "#"};
 	
     public MetaTagsExtractor(String url) {
     	String link = url;
@@ -25,7 +26,7 @@ public class MetaTagsExtractor {
     	}catch(Exception e){
     		return;
     	}
-    	 
+
     	paginasNivelDos();
     	
     	//Elements metas = doc.select("meta");
@@ -111,7 +112,7 @@ public class MetaTagsExtractor {
 		semi = queryDos.getQuery(sql);
 		
 		for(Element link : hrefs){
-			if(semi.contains(link.attr("abs:href")) || link.attr("abs:href").length()==0 || link.attr("abs:href").contains("facebook") || link.attr("abs:href").contains("twitter") || link.attr("abs:href").contains("google") || link.attr("abs:href").contains("youtube") || link.attr("abs:href").contains("pinterest") || link.attr("abs:href").contains("instagram") || link.attr("abs:href").contains("whatsapp") || link.attr("abs:href").contains("yahoo") || link.attr("abs:href").contains("reddit")|| link.attr("abs:href").contains("#"))
+			if(filtrar(link.attr("abs:href")))
 				continue;
 			
 			finale.add(link.attr("abs:href"));
@@ -119,6 +120,18 @@ public class MetaTagsExtractor {
 		
 		if(finale.isEmpty())
 			finale.add(semi.firstElement());
+	}
+
+	private boolean filtrar(String s){		
+		if(semi.contains(s) || s.length()==0)
+			return true;			
+			
+		for(int i = 0;i<sitiosOmitidos.length;i++){
+			if(s.contains(sitiosOmitidos[i]))
+				return true;
+		}
+		
+		return false;
 	}
 
 	public String getTitle(){
@@ -150,5 +163,8 @@ public class MetaTagsExtractor {
     }
     public void closeBd(){
     	queryDos.dbClose();
+    }
+    public static String[] getOmitidos(){
+    	return sitiosOmitidos;
     }
 }

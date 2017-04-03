@@ -17,10 +17,10 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	static JDialog ad;
 	static JMenuBar menuBar;
 	static JMenu sistem, search;
-	static JMenuItem consultar, agregar, agregarMas, borrar, importar, exportar, salir, start, stop, pause, nivelDos;
+	static JMenuItem consultar, agregar, agregarMas, borrar, importar, exportar, salir, start, stop, nivelDos;
 	static Vector<String> paginas = new Vector<String>(0, 1);
 	static Vector<Object> agregaAbc;
-	static boolean bandera=false, iniciado=false;
+	static boolean bandera=false, iniciado=false, iniciadoTodos=false;
 	static int multiplo=0, pags=0, frame = 0, reglon, error=0;
 	static JTextField clave, nuevoLink;
 	static JTextArea area;
@@ -60,7 +60,6 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	    search = new JMenu("Busqueda");
 	    start = new JMenuItem("Iniciar", new ImageIcon("icon/Start-2-icon.png"));
 	    stop  = new JMenuItem("Detener", new ImageIcon("icon/Stop-2-icon.png"));
-	    pause = new JMenuItem("Pausar", new ImageIcon("icon/Pause-icon.png"));
 	    nivelDos = new JCheckBoxMenuItem("Nivel Dos", false);
 	    
 	    sistem.setMnemonic(KeyEvent.VK_S);
@@ -72,8 +71,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	    	exportar.setMnemonic(KeyEvent.VK_E);
 	    search.setMnemonic(KeyEvent.VK_D);
 	    	start.setMnemonic(KeyEvent.VK_N);
-	    	stop.setMnemonic(KeyEvent.VK_T);
-	    	pause.setMnemonic(KeyEvent.VK_P);	    
+	    	stop.setMnemonic(KeyEvent.VK_T);	    
 	    
 	    menuBar = new JMenuBar();
 	    menuBar.add(sistem);
@@ -88,7 +86,6 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	    	sistem.add(salir);
 	    menuBar.add(search);
 	    	search.add(start);
-	    	search.add(pause);
 	    	search.add(stop);
 	    	search.addSeparator();
 	    	search.add(nivelDos);
@@ -399,15 +396,18 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		return con;
 	}
 	
+	public static void reactivar(){
+		buscar.setEnabled(true);
+	}
+	
 	@SuppressWarnings("deprecation")
 	public void actionPerformed(ActionEvent e){
 		if(e.getSource()==buscar || e.getSource()==clave || e.getSource()==start){
-			iniciado=true;
 			if(caja.getSelectedIndex()==0){
 				int o = JOptionPane.showConfirmDialog(null, "Se buscara en TODOS los estados\nRealmente deseas continuar?", "Precaución", JOptionPane.YES_NO_OPTION);
 				if (o == 0){
 					prep();
-					
+					iniciadoTodos = true;					
 					if(!dos.isEmpty()){
 						if(!((JCheckBoxMenuItem)nivelDos).getState())
 							((JCheckBoxMenuItem)nivelDos).setSelected(true);
@@ -425,6 +425,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 				}				
 				return;
 			}
+			iniciado=true;
 			paginas(caja.getSelectedIndex());
 			buscar();			
 			return;
@@ -436,6 +437,15 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 					hilos[i].stop();
 			}
 			iniciado=false;
+			return;
+		}
+		if(e.getSource()==stop && iniciadoTodos){
+			buscar.setEnabled(true);
+			for(int i=0; i<hiloNewMeta.length;i++){
+				if(hiloNewMeta[i].isAlive())
+					hiloNewMeta[i].stop();
+			}
+			iniciadoTodos=false;
 			return;
 		}
 		if(e.getSource()==salir){

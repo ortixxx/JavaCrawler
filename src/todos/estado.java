@@ -8,7 +8,7 @@ public class estado implements Runnable{
 	Main m;
 	Vector<String> paginas = new Vector<String>(0, 1);
 	int estado;
-	static int contador = 0;
+	static int contador = 0, cont = 0;
 	String palabra;
 	
 	public estado(int estado, String palabra){
@@ -19,13 +19,19 @@ public class estado implements Runnable{
 		for(int i = 0;i<aux.size();i++){
 			paginas.add(aux.elementAt(i));
 		}
+		cont += aux.size();
 	}
 
 	public void run() {
 		m = new Main(paginas.firstElement(), palabra, 0);
+		
 		for(int i = 0;i<paginas.size();i++){
 			m.extrae(paginas.elementAt(i));
 			System.out.println("Padre: "+(contador++));
+		}
+		if(contador==cont){
+			usuario.reactivar();
+			System.out.println("Busqueda Finalizada!");
 		}			
 	}
 }

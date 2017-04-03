@@ -15,8 +15,6 @@ public class palabra implements Runnable{
 			inicio[i] = new estado(i+1, palabra);
 			hilo[i] = new Thread(inicio[i]);
 			hilo[i].start();
-			//hilo[i].join();
 		}
-		//SOP.Terminado
 	}
 }
