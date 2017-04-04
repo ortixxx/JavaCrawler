@@ -19,7 +19,7 @@ public class Main implements Runnable{
 	public static Vector<String> urls = new Vector<String>(0, 1), noticias  = new Vector<String>(0, 1);
 	public static DefaultTableModel model;
 	public static Semaforo luz;
-	public static int x = 1, y = 0;
+	public static int x = 1, y = 0, z = 0;
 	public static LocalDate mark;
 	Main rec;
 	int nivel = 0;
@@ -69,6 +69,13 @@ public class Main implements Runnable{
 		extrae(sitio);
 		//System.out.println("MurioHilo: "+(y++));
 		y++;
+		if(y!=z){
+			usuario.getBarra().setValue(y);
+		}else{
+			usuario.reactivar();
+			usuario.getBarra().setValue(y);
+			System.out.println("Busqueda Finalizada!");
+		}
 	}
 	
 	public void extrae(String s){
@@ -187,6 +194,7 @@ public class Main implements Runnable{
 	public static void clearVector(){
 		x = 1;
 		y = 0;
+		z = 0;
 		model.setRowCount(0);
 		noticias.clear();
 		urls.clear();
@@ -238,5 +246,9 @@ public class Main implements Runnable{
 	
 	public static int getX() {
 		return x;
+	}
+
+	public static void setZ(int i) {
+		z = i;
 	}
 }

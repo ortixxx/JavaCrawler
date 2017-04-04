@@ -17,4 +17,12 @@ public class palabra implements Runnable{
 			hilo[i].start();
 		}
 	}
+	
+	@SuppressWarnings("deprecation")
+	public void stopChild(){
+		for(int i=0; i<hilo.length;i++){
+			if(hilo[i].isAlive())
+				hilo[i].stop();
+		}
+	}
 }

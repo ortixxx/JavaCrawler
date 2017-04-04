@@ -10,6 +10,8 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import bdex.sqlite;
 import org.apache.commons.validator.routines.UrlValidator;
+
+import todos.estado;
 import todos.palabra;
 
 public class usuario extends JFrame implements ActionListener, MouseListener, WindowListener{
@@ -25,6 +27,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	static JTextField clave, nuevoLink;
 	static JTextArea area;
 	static JButton buscar, insert, delete;
+	static Bar barra;
 	static omitir omitidos = new omitir();
 	static JComboBox<String> caja, cajaABC;
 	static String[] estadosABC = new String[]{"Aguascalientes","Baja California","Baja California Sur","Campeche","Coahuila","Colima","Chiapas","Chihuahua","CDMX","Durango","Guanajuato","Guerrero","Hidalgo","Jalisco","Edo de México","Michoacán","Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas"};
@@ -102,6 +105,8 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		add(buscar);
 		
 		box();
+		barra = new Bar();
+		add(barra);
 		
 		Tabla = new JTable(Main.getModel());
 		Tabla.setRowHeight(80);
@@ -269,6 +274,8 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			pags = paginas.size();
 			hilos = new Thread[pags*multiplo];
 			inicio = new Main[pags*multiplo];
+			barra.setMax(hilos.length);
+			Main.setZ(hilos.length);
 			for(int i=0;i<dos.size();i++){
 				for(int j=0;j<pags;j++){
 					inicio[j+(i*pags)] = new Main(paginas.elementAt(j), dos.elementAt(i), 0);
@@ -278,6 +285,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			}
 		}else{
 			buscar.setEnabled(true);
+			barra.setMax(barra.getMaximum());
 			JOptionPane.showMessageDialog(null, "Busqueda finalizada\nEncontrados: 0");
 		}
 	}
@@ -285,6 +293,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	private void prep(){
 		buscar.setEnabled(false);
 		actual = clave.getText();
+		barra.setValue(0);
 		Main.clearVector();
 		dos.clear();
 		procesa(actual);
@@ -396,8 +405,15 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		return con;
 	}
 	
+	public static Bar getBarra(){
+		return barra;
+	}
+	
 	public static void reactivar(){
 		buscar.setEnabled(true);
+		if(((JCheckBoxMenuItem)nivelDos).getState()){
+			((JCheckBoxMenuItem)nivelDos).setSelected(false);;
+		}			
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -407,6 +423,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 				int o = JOptionPane.showConfirmDialog(null, "Se buscara en TODOS los estados\nRealmente deseas continuar?", "Precaución", JOptionPane.YES_NO_OPTION);
 				if (o == 0){
 					prep();
+					estado.reset();
 					iniciadoTodos = true;					
 					if(!dos.isEmpty()){
 						if(!((JCheckBoxMenuItem)nivelDos).getState())
@@ -432,6 +449,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		}
 		if(e.getSource()==stop && iniciado){
 			buscar.setEnabled(true);
+			barra.setValue(barra.getMaximum());
 			for(int i=0; i<hilos.length;i++){
 				if(hilos[i].isAlive())
 					hilos[i].stop();
@@ -441,7 +459,9 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		}
 		if(e.getSource()==stop && iniciadoTodos){
 			buscar.setEnabled(true);
+			barra.setValue(barra.getMaximum());
 			for(int i=0; i<hiloNewMeta.length;i++){
+				newMeta[i].stopChild();
 				if(hiloNewMeta[i].isAlive())
 					hiloNewMeta[i].stop();
 			}
@@ -570,6 +590,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			return;
 		}
 	}
+	
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2){
 			if (e.getSource() == Tabla) {

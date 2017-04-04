@@ -20,6 +20,7 @@ public class estado implements Runnable{
 			paginas.add(aux.elementAt(i));
 		}
 		cont += aux.size();
+		usuario.getBarra().setMax(cont);
 	}
 
 	public void run() {
@@ -28,10 +29,17 @@ public class estado implements Runnable{
 		for(int i = 0;i<paginas.size();i++){
 			m.extrae(paginas.elementAt(i));
 			System.out.println("Padre: "+(contador++));
+			usuario.getBarra().setValue(contador);
 		}
 		if(contador==cont){
 			usuario.reactivar();
+			usuario.getBarra().setValue(contador);
 			System.out.println("Busqueda Finalizada!");
 		}			
+	}
+	
+	public static void reset(){
+		cont=0;
+		contador=0;
 	}
 }
