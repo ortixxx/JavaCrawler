@@ -1,25 +1,22 @@
 package mozilla;
 
 import java.util.Vector;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import bdex.sqlite;
 
-public class MetaTagsExtractor {
+public class metaTags {
 	public static String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
 	public String title, aux, des, img, date, ico;
 	public Element metaTag;
 	public Document doc;
 	public Elements hrefs;
 	public sqlite queryDos = new sqlite();
-	public Vector<String> semi = new Vector<String>(0, 1), finale = new Vector<String>(0, 1);
-	public static String[] sitiosOmitidos=new String[]{"facebook", "twitter", "hashtag", "google", "myspace", "youtube", "pinterest", "instagram", "tumblr.", "whatsapp", "line.", "yahoo", "reddit", "linkedin", "digg.", "stumbleupon", "disqus", "publimetro", "flipboard", "addtoany", "#"};
+	public Vector<String> semi = new Vector<String>(0, 1), finale = new Vector<String>(0, 1), ignorados = new Vector<String>(0, 1);
 	
-    public MetaTagsExtractor(String url) {
+    public metaTags(String url) {
     	String link = url;
     	try{
     		doc = Jsoup.connect(link).userAgent(userAgent).get();
@@ -108,8 +105,7 @@ public class MetaTagsExtractor {
     
 	public void paginasNivelDos() {
 		hrefs = doc.select("a[href]");
-		String sql = "select nombre from periodicos";
-		semi = queryDos.getQuery(sql);
+		semi = queryDos.getQuery("select nombre from periodicos");
 		
 		for(Element link : hrefs){
 			if(filtrar(link.attr("abs:href")))
@@ -125,9 +121,10 @@ public class MetaTagsExtractor {
 	private boolean filtrar(String s){		
 		if(semi.contains(s) || s.length()==0)
 			return true;			
-			
-		for(int i = 0;i<sitiosOmitidos.length;i++){
-			if(s.contains(sitiosOmitidos[i]))
+		
+		ignorados = queryDos.getQuery("select nombre from ignorar");
+		for(int i = 0;i<ignorados.size();i++){
+			if(s.contains(ignorados.elementAt(i)))
 				return true;
 		}
 		
@@ -163,8 +160,5 @@ public class MetaTagsExtractor {
     }
     public void closeBd(){
     	queryDos.dbClose();
-    }
-    public static String[] getOmitidos(){
-    	return sitiosOmitidos;
     }
 }

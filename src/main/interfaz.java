@@ -10,16 +10,15 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import bdex.sqlite;
 import org.apache.commons.validator.routines.UrlValidator;
-
 import todos.estado;
 import todos.palabra;
 
-public class usuario extends JFrame implements ActionListener, MouseListener, WindowListener{
+public class interfaz extends JFrame implements ActionListener, MouseListener, WindowListener{
 	private static final long serialVersionUID = 1L;
 	static JDialog ad;
 	static JMenuBar menuBar;
-	static JMenu sistem, search;
-	static JMenuItem consultar, agregar, agregarMas, borrar, importar, exportar, salir, start, stop, nivelDos;
+	static JMenu sistem, search, rules;
+	static JMenuItem consultar, agregar, agregarMas, borrar, importar, exportar, salir, start, stop, nivelDos, omisas, newomisas;
 	static Vector<String> paginas = new Vector<String>(0, 1);
 	static Vector<Object> agregaAbc;
 	static boolean bandera=false, iniciado=false, iniciadoTodos=false;
@@ -27,7 +26,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	static JTextField clave, nuevoLink;
 	static JTextArea area;
 	static JButton buscar, insert, delete;
-	static Bar barra;
+	static barra barra;
 	static omitir omitidos = new omitir();
 	static JComboBox<String> caja, cajaABC;
 	static String[] estadosABC = new String[]{"Aguascalientes","Baja California","Baja California Sur","Campeche","Coahuila","Colima","Chiapas","Chihuahua","CDMX","Durango","Guanajuato","Guerrero","Hidalgo","Jalisco","Edo de México","Michoacán","Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas"};
@@ -36,21 +35,21 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	static StringTokenizer token;
 	static UrlValidator validar = new UrlValidator();
 	Thread [] hilos, aux, hiloNewMeta;
-	Main [] inicio;
+	crawl [] inicio;
 	palabra [] newMeta;
-	Main maind = new Main();
+	crawl maind = new crawl();
 	Vector<String> otras = new Vector<String>(), otrasUrls = new Vector<String>(), dos = new Vector<String>(0, 1);
 	JTable Tabla, tablaAbc;
 	JScrollPane Consulta, scrollAbc, scrollInsert;
 	JPanel PanelTabla, panelAbc, panelInsert;
 	DefaultTableModel modelAbc;
 	
-	public usuario(){
+	public interfaz(){
 		super("Gallbo: Motor de busqueda");
-		interfaz();
+		hazInterfaz();
 	}
 	
-	private void interfaz(){
+	private void hazInterfaz(){
 	    sistem = new JMenu("Sistema");
 	    agregar = new JMenuItem("Agregar Pagina");
 	    agregarMas = new JMenuItem("Agregar mas...");
@@ -65,6 +64,10 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	    stop  = new JMenuItem("Detener", new ImageIcon("icon/Stop-2-icon.png"));
 	    nivelDos = new JCheckBoxMenuItem("Nivel Dos", false);
 	    
+	    rules = new JMenu("Reglas");
+	    newomisas = new JMenuItem("Agregar omision");
+	    omisas = new JMenuItem("Omisiones");
+	    	    
 	    sistem.setMnemonic(KeyEvent.VK_S);
 	    	agregar.setMnemonic(KeyEvent.VK_A);
 	    	agregarMas.setMnemonic(KeyEvent.VK_M);
@@ -74,7 +77,10 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	    	exportar.setMnemonic(KeyEvent.VK_E);
 	    search.setMnemonic(KeyEvent.VK_D);
 	    	start.setMnemonic(KeyEvent.VK_N);
-	    	stop.setMnemonic(KeyEvent.VK_T);	    
+	    	stop.setMnemonic(KeyEvent.VK_T);
+	    rules.setMnemonic(KeyEvent.VK_G);
+	    	newomisas.setMnemonic(KeyEvent.VK_I);
+	    	omisas.setMnemonic(KeyEvent.VK_O);
 	    
 	    menuBar = new JMenuBar();
 	    menuBar.add(sistem);
@@ -92,6 +98,9 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	    	search.add(stop);
 	    	search.addSeparator();
 	    	search.add(nivelDos);
+	    menuBar.add(rules);
+	    	rules.add(newomisas);
+	    	rules.add(omisas);
 	    	
 	    setJMenuBar(menuBar);
 	    
@@ -105,10 +114,10 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		add(buscar);
 		
 		box();
-		barra = new Bar();
+		barra = new barra();
 		add(barra);
 		
-		Tabla = new JTable(Main.getModel());
+		Tabla = new JTable(crawl.getModel());
 		Tabla.setRowHeight(80);
 		Tabla.getColumnModel().getColumn(0).setMaxWidth(30);
 		Tabla.getColumnModel().getColumn(0).setResizable(false);
@@ -128,7 +137,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		add(PanelTabla);
 		
 		nuevoLink = new JTextField();
-		nuevoLink.setBounds(10, 10, 340, 30);
+		nuevoLink.setLocation(10, 10);
 		nuevoLink.addFocusListener(new FocusListener(){
 			@Override
 		    public void focusGained(FocusEvent e) {
@@ -139,7 +148,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		    }
 		    @Override
 		    public void focusLost(FocusEvent e){
-		        if (nuevoLink.getText().isEmpty()) {
+		        if (nuevoLink.getText().isEmpty() && frame==1) {
 		        	nuevoLink.setForeground(Color.GRAY);
 		        	nuevoLink.setText("http://...");
 		        }
@@ -170,7 +179,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	    };
 	    
 	    modelAbc.addColumn("#");
-	    modelAbc.addColumn("Links");
+	    modelAbc.addColumn("Descripcion");
 	    
 	    tablaAbc = new JTable(modelAbc);
 	    tablaAbc.setRowHeight(25);
@@ -184,7 +193,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		
 		panelAbc = new JPanel();
 		panelAbc.setLayout(new BorderLayout());
-		panelAbc.setBounds(140, 10, 470, 277);
+		panelAbc.setSize(470, 277);
 		panelAbc.add(scrollAbc, BorderLayout.CENTER);
 		
 		area = new JTextArea();
@@ -233,6 +242,9 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	    start.addActionListener(this);
 		stop.addActionListener(this);
 		
+		newomisas.addActionListener(this);
+		omisas.addActionListener(this);
+		
 		cajaABC.addActionListener(this);
 		insert.addActionListener(this);
 		delete.addActionListener(this);
@@ -258,12 +270,10 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		paginas.clear();
 		if(estado==0){
 			sql = "select nombre from periodicos";
-			paginas = con.getQuery(sql);
 		}else{
 			sql = "select nombre from periodicos where id_estado = "+estado;
-			paginas = con.getQuery(sql);
 		}
-		
+		paginas = con.getQuery(sql);
 	}
 
 	private void buscar(){
@@ -273,12 +283,12 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			multiplo=dos.size();
 			pags = paginas.size();
 			hilos = new Thread[pags*multiplo];
-			inicio = new Main[pags*multiplo];
+			inicio = new crawl[pags*multiplo];
 			barra.setMax(hilos.length);
-			Main.setZ(hilos.length);
+			crawl.setZ(hilos.length);
 			for(int i=0;i<dos.size();i++){
 				for(int j=0;j<pags;j++){
-					inicio[j+(i*pags)] = new Main(paginas.elementAt(j), dos.elementAt(i), 0);
+					inicio[j+(i*pags)] = new crawl(paginas.elementAt(j), dos.elementAt(i), 0);
 					hilos[j+(i*pags)] = new Thread(inicio[j+(i*pags)]);
 					hilos[j+(i*pags)].start();
 				}
@@ -294,7 +304,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		buscar.setEnabled(false);
 		actual = clave.getText();
 		barra.setValue(0);
-		Main.clearVector();
+		crawl.clearVector();
 		dos.clear();
 		procesa(actual);
 	}
@@ -342,6 +352,11 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	}
 
 	private void removeAd(){
+		if(frame > 4)
+			ad.setTitle("Reglas");
+		else
+			ad.setTitle("ABC periodicos");
+		
 		ad.remove(delete);
 		ad.remove(cajaABC);
 		ad.remove(insert);
@@ -353,6 +368,19 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	private void ordenaCaja(){
 		paginas(cajaABC.getSelectedIndex());
 		modelAbc.setRowCount(0);
+		for(int i=0;i<paginas.size();i++){
+			agregaAbc = new Vector<Object>(0, 1);
+			agregaAbc.add(i+1);
+			agregaAbc.add(paginas.elementAt(i));
+			modelAbc.addRow(agregaAbc);
+		}
+	}
+	
+	private void ordenaOmitidos(){
+		paginas.clear();
+		modelAbc.setRowCount(0);
+		sql = "select nombre from ignorar";
+		paginas = con.getQuery(sql);
 		for(int i=0;i<paginas.size();i++){
 			agregaAbc = new Vector<Object>(0, 1);
 			agregaAbc.add(i+1);
@@ -372,7 +400,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 				JOptionPane.showMessageDialog(null, "Pagina eliminada");
 				System.out.println("Total de periodicos: "+con.getTotal());
 			}catch(Exception ex){
-				JOptionPane.showMessageDialog(null, "Error al eliminar\n"+paginas.elementAt(tablaAbc.getSelectedRow()));
+				JOptionPane.showMessageDialog(null, "Error al eliminar\n"+paginas.elementAt(reglon));
 			}
 		}		
 	}
@@ -405,7 +433,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		return con;
 	}
 	
-	public static Bar getBarra(){
+	public static barra getBarra(){
 		return barra;
 	}
 	
@@ -413,7 +441,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		buscar.setEnabled(true);
 		if(((JCheckBoxMenuItem)nivelDos).getState()){
 			((JCheckBoxMenuItem)nivelDos).setSelected(false);;
-		}			
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -448,17 +476,16 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			return;
 		}
 		if(e.getSource()==stop && iniciado){
-			buscar.setEnabled(true);
 			barra.setValue(barra.getMaximum());
 			for(int i=0; i<hilos.length;i++){
 				if(hilos[i].isAlive())
 					hilos[i].stop();
 			}
 			iniciado=false;
+			buscar.setEnabled(true);
 			return;
 		}
 		if(e.getSource()==stop && iniciadoTodos){
-			buscar.setEnabled(true);
 			barra.setValue(barra.getMaximum());
 			for(int i=0; i<hiloNewMeta.length;i++){
 				newMeta[i].stopChild();
@@ -466,6 +493,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 					hiloNewMeta[i].stop();
 			}
 			iniciadoTodos=false;
+			buscar.setEnabled(true);
 			return;
 		}
 		if(e.getSource()==salir){
@@ -479,6 +507,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		if(e.getSource()==agregar){
 			frame=1;
 			removeAd();
+			nuevoLink.setSize(340, 30);
 			ad.add(nuevoLink);
 			cajaABC.setLocation(360, 10);
 			ad.add(cajaABC);
@@ -503,6 +532,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			removeAd();			
 			cajaABC.setLocation(10, 10);
 			ad.add(cajaABC);
+			panelAbc.setLocation(140, 10);
 			ad.add(panelAbc);
 			ad.add(delete);
 			ordenaCaja();
@@ -520,9 +550,30 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			removeAd();			
 			cajaABC.setLocation(10, 10);
 			ad.add(cajaABC);
+			panelAbc.setLocation(140, 10);
 			ad.add(panelAbc);
 			ordenaCaja();
 			ad.setSize(625, 325);
+			ad.setVisible(true);
+			return;
+		}
+		if(e.getSource()==newomisas){
+			frame=5;
+			removeAd();
+			nuevoLink.setSize(470, 30);
+			ad.add(nuevoLink);
+			ad.add(insert);
+			ad.setSize(625, 78);
+			ad.setVisible(true);
+			return;
+		}
+		if(e.getSource()==omisas){
+			frame=6;
+			removeAd();
+			panelAbc.setLocation(10, 10);
+			ad.add(panelAbc);
+			ordenaOmitidos();
+			ad.setSize(495, 325);
 			ad.setVisible(true);
 			return;
 		}
@@ -570,6 +621,26 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 			}
 			cajaABC.setSelectedIndex(0);
 		}
+		if((e.getSource()==insert || e.getSource()==nuevoLink ) && frame==5){
+			if(nuevoLink.getText().length()==0){
+				JOptionPane.showMessageDialog(null, "Rellene el campo de texto");
+				nuevoLink.grabFocus();
+				nuevoLink.selectAll();
+				return;
+			}
+			int res = JOptionPane.showConfirmDialog(null, "La palabra >>"+nuevoLink.getText()+"<< sera omitida\nes correcto?", "Mensaje de confirmacion", JOptionPane.YES_NO_OPTION);
+			if (res == 0){
+				sql = "INSERT OR IGNORE INTO ignorar VALUES ('"+nuevoLink.getText()+"')";
+				try {
+					con.setQuery(sql);
+					nuevoLink.setText("");
+					JOptionPane.showMessageDialog(null, "Palabra agregada");
+				} catch (SQLException ex) {
+					System.out.println("Error al agregar");
+				}
+			}
+			return;
+		}
 		if(e.getSource()==cajaABC && (frame==2 || frame==3)){
 			bandera=false;
 			ordenaCaja();			
@@ -594,7 +665,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2){
 			if (e.getSource() == Tabla) {
-				otrasUrls = Main.getVector(1);
+				otrasUrls = crawl.getVector(1);
 				try{
 					Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + otrasUrls.elementAt(Tabla.getSelectedRow()));
 				}catch(Exception err){
@@ -613,6 +684,21 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 					Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + paginas.elementAt(tablaAbc.getSelectedRow()));
 				}catch(Exception err){
 					JOptionPane.showMessageDialog(null,"Error: "+err);
+				}
+				return;
+			}
+			if(e.getSource()==tablaAbc && frame==6){
+				reglon = tablaAbc.getSelectedRow();
+				int res = JOptionPane.showConfirmDialog(null, "Realmente deseas eliminar >>"+paginas.elementAt(reglon)+"<< ?", "Advertencia", JOptionPane.YES_NO_OPTION);
+				if (res == 0){
+					sql = "DELETE FROM ignorar WHERE nombre = '"+paginas.elementAt(reglon)+"'";
+					try{
+						con.setQuery(sql);
+						ordenaOmitidos();
+						JOptionPane.showMessageDialog(null, "Registro eliminado");
+					}catch(Exception ex){
+						JOptionPane.showMessageDialog(null, "Error al eliminar\n"+paginas.elementAt(reglon));
+					}
 				}
 				return;
 			}
@@ -659,7 +745,7 @@ public class usuario extends JFrame implements ActionListener, MouseListener, Wi
 		     }
 		     catch (Exception e) {}
 		}   
-		new usuario();
+		new interfaz();
 	}
 	
 	public class MultiLineCellRenderer extends JTextArea implements TableCellRenderer {

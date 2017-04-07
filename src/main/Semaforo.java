@@ -1,9 +1,9 @@
 package main;
-class Semaforo {
+class semaforo {
 
 	private int Recursos;
 
-	public Semaforo(int Recursos) {
+	public semaforo(int Recursos) {
 		this.Recursos=Recursos;
 	}
 

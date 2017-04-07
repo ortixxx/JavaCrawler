@@ -13,35 +13,34 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import mozilla.MetaTagsExtractor;
+import mozilla.metaTags;
 
-public class Main implements Runnable{
+public class crawl implements Runnable{
 	public static Vector<String> urls = new Vector<String>(0, 1), noticias  = new Vector<String>(0, 1);
 	public static DefaultTableModel model;
-	public static Semaforo luz;
+	public static semaforo luz;
 	public static int x = 1, y = 0, z = 0;
 	public static LocalDate mark;
-	Main rec;
+	crawl rec;
 	int nivel = 0;
-	String[]omitir;
 	LocalDate copia;
 	String sitio, clave, texto, titulo, date, des;
 	Vector<Object> uotro;
-	Vector<String> nuevaPags;
+	Vector<String> nuevaPags, omitir;
 	BufferedImage c;
 	Document doc;
-	MetaTagsExtractor mte;
+	metaTags mte;
 	ImageIcon foto = new ImageIcon("loge.png");
 	
-	public Main(String st,String cl, int n){		
+	public crawl(String st,String cl, int n){		
 		sitio = st;
 		clave = acentos(cl);
 		nivel = n;
 	}
 	
-	public Main(){
+	public crawl(){
 		mark = LocalDate.now().minusDays(2);
-	    luz = new Semaforo(1);
+	    luz = new semaforo(1);
 		model = new DefaultTableModel(){
 			private static final long serialVersionUID = 1L;
 
@@ -70,10 +69,10 @@ public class Main implements Runnable{
 		//System.out.println("MurioHilo: "+(y++));
 		y++;
 		if(y!=z){
-			usuario.getBarra().setValue(y);
+			interfaz.getBarra().setValue(y);
 		}else{
-			usuario.reactivar();
-			usuario.getBarra().setValue(y);
+			interfaz.reactivar();
+			interfaz.getBarra().setValue(y);
 			System.out.println("Busqueda Finalizada!");
 		}
 	}
@@ -108,16 +107,16 @@ public class Main implements Runnable{
 				return;
 			}
 		
-		omitir = MetaTagsExtractor.getOmitidos();
-		for(int i=0;i<omitir.length;i++)
-			if(URL.contains(omitir[i])){
+		omitir = interfaz.getSql().getQuery("select nombre from ignorar");
+		for(int i=0;i<omitir.size();i++)
+			if(URL.contains(omitir.elementAt(i))){
 				luz.Verde();
 				return;
 			}
 			
 		
 		if(!urls.contains(URL)){
-			mte = new MetaTagsExtractor(URL);
+			mte = new metaTags(URL);
 			date=mte.getDate();
 			
 			try{
@@ -168,10 +167,10 @@ public class Main implements Runnable{
 			noticias.add(mte.getTitle());
 			urls.add(URL);	
 						
-			if(nivel == 0 && ((JCheckBoxMenuItem)usuario.getNivelDos()).getState()){
+			if(nivel == 0 && ((JCheckBoxMenuItem)interfaz.getNivelDos()).getState()){
 				luz.Verde();
 				nuevaPags = mte.getHref();
-				rec = new Main(URL, clave, 1);
+				rec = new crawl(URL, clave, 1);
 				for(int i=0;i<nuevaPags.size();i++){
 					rec.extrae(nuevaPags.elementAt(i));
 				}				

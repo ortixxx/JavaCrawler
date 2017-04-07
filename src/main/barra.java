@@ -2,10 +2,10 @@ package main;
 
 import javax.swing.*;
  
-public class Bar extends JProgressBar{
+public class barra extends JProgressBar{
 	private static final long serialVersionUID = 1L;
 			
-	public Bar(){
+	public barra(){
         setMinimum(0);
         setStringPainted(true);
         setBounds(560, 15, 230, 26);

@@ -1,7 +1,7 @@
 package todos;
 
 public class palabra implements Runnable{
-	static int cont = 32;
+	static final int cont = 32;
 	String palabra;
 	estado [] inicio = new estado[32];
 	Thread [] hilo = new Thread[32];	
