@@ -1,10 +1,12 @@
 package main;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.sql.SQLException;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -22,7 +24,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	static Vector<String> paginas = new Vector<String>(0, 1);
 	static Vector<Object> agregaAbc;
 	static boolean bandera=false, iniciado=false, iniciadoTodos=false;
-	static int multiplo=0, pags=0, frame = 0, reglon, error=0;
+	static int multiplo=0, pags=0, frame = 0, reglon, error=0, returnVal;
 	static JTextField clave, nuevoLink;
 	static JTextArea area;
 	static JButton buscar, insert, delete;
@@ -31,9 +33,11 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	static JComboBox<String> caja, cajaABC;
 	static String[] estadosABC = new String[]{"Aguascalientes","Baja California","Baja California Sur","Campeche","Coahuila","Colima","Chiapas","Chihuahua","CDMX","Durango","Guanajuato","Guerrero","Hidalgo","Jalisco","Edo de México","Michoacán","Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas"};
 	static sqlite con = new sqlite();
-	static String sql, actual = " ";
+	static String sql;
 	static StringTokenizer token;
 	static UrlValidator validar = new UrlValidator();
+	static JFileChooser abrir, guardar;
+	static File archivoGuardar;
 	Thread [] hilos, aux, hiloNewMeta;
 	crawl [] inicio;
 	palabra [] newMeta;
@@ -45,7 +49,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	DefaultTableModel modelAbc;
 	
 	public interfaz(){
-		super("Gallbo: Motor de busqueda");
+		super("Gallbo: Motor de busqueda");		
 		hazInterfaz();
 	}
 	
@@ -219,6 +223,17 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		ad.setLocation( ad.getY()+17, ad.getX()-170);
 		ad.setResizable(false);
 		
+		abrir = new JFileChooser();
+		abrir.setDialogTitle("Importar");
+		abrir.setAcceptAllFileFilterUsed(false);
+		abrir.addChoosableFileFilter(new FileNameExtensionFilter("Texto CSV (*.csv)", "csv"));
+		abrir.addChoosableFileFilter(new FileNameExtensionFilter("SQL (*.sql)", "sql"));
+		SwingUtilities.updateComponentTreeUI(abrir);
+		
+		guardar = new JFileChooser();
+		guardar.setDialogTitle("Exportar");
+		guardar.setFileSelectionMode(1);		
+		
 		listeners();
 		setIconImage(new ImageIcon("loge.png").getImage());
 		setSize(800,650);
@@ -237,6 +252,8 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		agregarMas.addActionListener(this);
 	    borrar.addActionListener(this);
 	    consultar.addActionListener(this);
+	    importar.addActionListener(this);
+	    exportar.addActionListener(this);
 	    salir.addActionListener(this);
 	    
 	    start.addActionListener(this);
@@ -287,6 +304,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			barra.setMax(hilos.length);
 			crawl.setZ(hilos.length);
 			for(int i=0;i<dos.size();i++){
+				System.out.println(dos.elementAt(i));
 				for(int j=0;j<pags;j++){
 					inicio[j+(i*pags)] = new crawl(paginas.elementAt(j), dos.elementAt(i), 0);
 					hilos[j+(i*pags)] = new Thread(inicio[j+(i*pags)]);
@@ -302,52 +320,36 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	
 	private void prep(){
 		buscar.setEnabled(false);
-		actual = clave.getText();
 		barra.setValue(0);
 		crawl.clearVector();
 		dos.clear();
-		procesa(actual);
+		procesa(clave.getText());
 	}
-
-	private void procesa(String s) {
-		int bandera = 0, comillas = 0;
-		String nuevo = "";
-		for(int i=0;i<s.length();i++){
-			if(s.charAt(i)==' ' && bandera == 0){
-				if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo)) && !dos.contains(nuevo)){
-					dos.add(nuevo);
-				}
-				nuevo="";
-				continue;
-			}
-			if(Character.isAlphabetic(s.charAt(i))){
-				nuevo += s.charAt(i);
-				continue;
+	
+	private void procesa(String s){
+		token = new StringTokenizer(s);
+		String nuevo = "", comillas = "";
+		boolean coma = false;
+		while(token.hasMoreTokens()){
+			nuevo = token.nextToken();
+			if(nuevo.charAt(0)=='"'){
+				comillas = nuevo.substring(1, nuevo.length());
+				coma = true;
 			}else{
-				if(s.charAt(i)=='"' && comillas<1){
-					if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo)) && !dos.contains(nuevo)){
-						dos.add(nuevo);
+				if(coma){
+					comillas = comillas+" "+nuevo;
+					if(comillas.charAt(comillas.length()-1)=='"'){
+						comillas = comillas.substring(0, comillas.length()-1);
+						if(comillas.length()>=2 && !omitidos.getVector().contains(maind.acentos(comillas)) && !dos.contains(comillas))
+							dos.add(comillas);
+						
+						coma = false;
 					}
-					nuevo="";
-					comillas++;
-					bandera = 1;
-					continue;
 				}else{
-					if(s.charAt(i)!='"' && comillas>0){
-						nuevo += s.charAt(i);
-						continue;
-					}
-					comillas=0;
-					bandera=0;
-					if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo)) && !dos.contains(nuevo)){
+					if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo)) && !dos.contains(nuevo))
 						dos.add(nuevo);
-					}
-					nuevo="";
-				}
-			}
-		}
-		if(nuevo.length()>=2 && !omitidos.getVector().contains(maind.acentos(nuevo)) && !dos.contains(nuevo)){
-			dos.add(nuevo);
+				}								
+			}			
 		}
 	}
 
@@ -660,6 +662,24 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			borraRegistro();
 			return;
 		}
+		if(e.getSource()==importar){			
+			returnVal = abrir.showOpenDialog(this);
+			if (returnVal == JFileChooser.APPROVE_OPTION)
+				archivoGuardar = abrir.getSelectedFile();
+			else
+				return;
+			//importExport . . . import(archivoGuardar.getPath());
+		}
+		if(e.getSource()==exportar){			
+			returnVal =  guardar.showSaveDialog(null);
+			if (returnVal == JFileChooser.APPROVE_OPTION)
+				archivoGuardar = guardar.getSelectedFile();
+			else
+				return;
+			//importExport . . . import(archivoGuardar.getPath());
+			//Sera con el boton (. . .) para que seleccione la ruta en el dialog y se puede agregar condiciones de guardado
+			//importar no usara dialog , pero tendra mas validaciones ya que al leer, y procesar el transact debe ser valido
+		}
 	}
 	
 	public void mouseClicked(MouseEvent e) {
@@ -714,6 +734,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	public void mouseExited(MouseEvent arg0){}
 	public void mousePressed(MouseEvent arg0){}
 	public void mouseReleased(MouseEvent arg0){}
+	
 	public void windowActivated(WindowEvent arg0){}
 	public void windowClosed(WindowEvent arg0){}
 	public void windowClosing(WindowEvent arg0){
@@ -741,10 +762,10 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		String name = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
 		if (os.indexOf("win") >= 0) {
 		     try {
-		          UIManager.setLookAndFeel(name);
+		          UIManager.setLookAndFeel(name);		          
 		     }
 		     catch (Exception e) {}
-		}   
+		}
 		new interfaz();
 	}
 	
