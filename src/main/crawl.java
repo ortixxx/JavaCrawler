@@ -82,7 +82,7 @@ public class crawl implements Runnable{
 			doc = Jsoup.connect(s).get();
 			s = remove(s);
 		} catch (IOException e1) {
-			System.out.println("Error de conexion: "+s);
+			importExport.logErrorres().error("Error de conexion: "+s);
 			return;
 		}
 		
@@ -94,7 +94,7 @@ public class crawl implements Runnable{
 					processPage(link.attr("abs:href"));
 				}
 			}catch(Exception e){
-				e.printStackTrace();
+				importExport.logErrorres().error("Error: "+e);
 			}
 		}
 	}
@@ -134,7 +134,6 @@ public class crawl implements Runnable{
 			}
 			
 			uotro = new Vector<Object>();
-			//System.out.println("***************************************************");
 			uotro.add(x++);
 			
 			try {

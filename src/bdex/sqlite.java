@@ -88,4 +88,8 @@ public class sqlite {
 		rs = statement.executeQuery("select count(*) from periodicos");
 		return rs.getInt(1);
 	}
+	
+	public Statement getState(){
+		return statement;
+	}
 }

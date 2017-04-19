@@ -25,7 +25,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	static Vector<Object> agregaAbc;
 	static boolean bandera=false, iniciado=false, iniciadoTodos=false;
 	static int multiplo=0, pags=0, frame = 0, reglon, error=0, returnVal;
-	static JTextField clave, nuevoLink;
+	static JTextField clave, nuevoLink, sorter;
 	static JTextArea area;
 	static JButton buscar, insert, delete;
 	static barra barra;
@@ -38,6 +38,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	static UrlValidator validar = new UrlValidator();
 	static JFileChooser abrir, guardar;
 	static File archivoGuardar;
+	static importExport user = new importExport();
 	Thread [] hilos, aux, hiloNewMeta;
 	crawl [] inicio;
 	palabra [] newMeta;
@@ -197,7 +198,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		
 		panelAbc = new JPanel();
 		panelAbc.setLayout(new BorderLayout());
-		panelAbc.setSize(470, 277);
+		panelAbc.setSize(470, 237);
 		panelAbc.add(scrollAbc, BorderLayout.CENTER);
 		
 		area = new JTextArea();
@@ -207,14 +208,17 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			
 		panelInsert = new JPanel();
 		panelInsert.setLayout(new BorderLayout());
-		panelInsert.setBounds(10, 10, 340, 240);
+		panelInsert.setBounds(10, 10, 470, 277);
 		panelInsert.add(scrollInsert, BorderLayout.CENTER);
 		
 		insert = new JButton("Agregar");
-		insert.setBounds(490, 9, 120, 32);
+		insert.setSize(120, 30);
 		
 		delete = new JButton("Borrar");
-		delete.setBounds(10, 258, 120, 30);
+		delete.setBounds(490, 258, 120, 30);
+		
+		sorter = new JTextField();
+		sorter.setBounds(10, 10, 470, 30);
 		
 		ad = new JDialog(this, "ABC periodicos", true);
 		ad.setLayout(null);
@@ -226,13 +230,13 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		abrir = new JFileChooser();
 		abrir.setDialogTitle("Importar");
 		abrir.setAcceptAllFileFilterUsed(false);
-		abrir.addChoosableFileFilter(new FileNameExtensionFilter("Texto CSV (*.csv)", "csv"));
 		abrir.addChoosableFileFilter(new FileNameExtensionFilter("SQL (*.sql)", "sql"));
+		//abrir.addChoosableFileFilter(new FileNameExtensionFilter("Texto CSV (*.csv)", "csv"));		
 		SwingUtilities.updateComponentTreeUI(abrir);
 		
 		guardar = new JFileChooser();
 		guardar.setDialogTitle("Exportar");
-		guardar.setFileSelectionMode(1);		
+		guardar.setSelectedFile(new File("periodicos.sql"));
 		
 		listeners();
 		setIconImage(new ImageIcon("loge.png").getImage());
@@ -262,6 +266,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		newomisas.addActionListener(this);
 		omisas.addActionListener(this);
 		
+		sorter.addActionListener(this);
 		cajaABC.addActionListener(this);
 		insert.addActionListener(this);
 		delete.addActionListener(this);
@@ -304,7 +309,6 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			barra.setMax(hilos.length);
 			crawl.setZ(hilos.length);
 			for(int i=0;i<dos.size();i++){
-				System.out.println(dos.elementAt(i));
 				for(int j=0;j<pags;j++){
 					inicio[j+(i*pags)] = new crawl(paginas.elementAt(j), dos.elementAt(i), 0);
 					hilos[j+(i*pags)] = new Thread(inicio[j+(i*pags)]);
@@ -365,6 +369,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		ad.remove(nuevoLink);
 		ad.remove(panelAbc);
 		ad.remove(panelInsert);
+		ad.remove(sorter);
 	}
 
 	private void ordenaCaja(){
@@ -382,6 +387,23 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		paginas.clear();
 		modelAbc.setRowCount(0);
 		sql = "select nombre from ignorar";
+		paginas = con.getQuery(sql);
+		for(int i=0;i<paginas.size();i++){
+			agregaAbc = new Vector<Object>(0, 1);
+			agregaAbc.add(i+1);
+			agregaAbc.add(paginas.elementAt(i));
+			modelAbc.addRow(agregaAbc);
+		}
+	}
+	
+	private void busqueda(String like, int estado){
+		paginas.clear();
+		modelAbc.setRowCount(0);
+		if(estado==0){
+			sql = "select nombre from periodicos where nombre like '%"+like+"%'";
+		}else{
+			sql = "select nombre from periodicos where nombre like '%"+like+"%' and id_estado = "+estado;
+		}
 		paginas = con.getQuery(sql);
 		for(int i=0;i<paginas.size();i++){
 			agregaAbc = new Vector<Object>(0, 1);
@@ -513,6 +535,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			ad.add(nuevoLink);
 			cajaABC.setLocation(360, 10);
 			ad.add(cajaABC);
+			insert.setLocation(490, 10); 
 			ad.add(insert);
 			ad.setSize(625, 78);
 			ad.setVisible(true);
@@ -521,20 +544,22 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		if(e.getSource()==agregarMas){
 			frame=4;
 			removeAd();
-			cajaABC.setLocation(360, 10);
+			cajaABC.setLocation(490, 10);
 			ad.add(cajaABC);
+			insert.setLocation(490, 258);
 			ad.add(insert);
 			ad.add(panelInsert);
-			ad.setSize(625, 288);
+			ad.setSize(625, 325);
 			ad.setVisible(true);
 			return;
 		}
 		if(e.getSource()==borrar){
 			frame=2;
-			removeAd();			
-			cajaABC.setLocation(10, 10);
+			removeAd();
+			ad.add(sorter);
+			cajaABC.setLocation(490, 10);
 			ad.add(cajaABC);
-			panelAbc.setLocation(140, 10);
+			panelAbc.setLocation(10, 50);
 			ad.add(panelAbc);
 			ad.add(delete);
 			ordenaCaja();
@@ -544,15 +569,16 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		}
 		if(e.getSource()==consultar){
 			frame=3;
-			/*try{
+			try{
 				System.out.println("Total de periodicos: "+con.getTotal());
 			}catch(SQLException ex){
 				
-			}	*/
-			removeAd();			
-			cajaABC.setLocation(10, 10);
+			}
+			removeAd();
+			ad.add(sorter);
+			cajaABC.setLocation(490, 10);
 			ad.add(cajaABC);
-			panelAbc.setLocation(140, 10);
+			panelAbc.setLocation(10, 50);
 			ad.add(panelAbc);
 			ordenaCaja();
 			ad.setSize(625, 325);
@@ -564,6 +590,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			removeAd();
 			nuevoLink.setSize(470, 30);
 			ad.add(nuevoLink);
+			insert.setLocation(490, 10);
 			ad.add(insert);
 			ad.setSize(625, 78);
 			ad.setVisible(true);
@@ -575,7 +602,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			panelAbc.setLocation(10, 10);
 			ad.add(panelAbc);
 			ordenaOmitidos();
-			ad.setSize(495, 325);
+			ad.setSize(495, 285);
 			ad.setVisible(true);
 			return;
 		}
@@ -644,8 +671,16 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			return;
 		}
 		if(e.getSource()==cajaABC && (frame==2 || frame==3)){
-			bandera=false;
-			ordenaCaja();			
+			if(sorter.getText().length()>0){
+				busqueda(sorter.getText(), cajaABC.getSelectedIndex());
+			}else{
+				bandera=false;
+				ordenaCaja();	
+			}					
+			return;
+		}
+		if(e.getSource()==sorter){
+			busqueda(sorter.getText(), cajaABC.getSelectedIndex());
 			return;
 		}
 		if(e.getSource()==delete){
@@ -664,21 +699,21 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		}
 		if(e.getSource()==importar){			
 			returnVal = abrir.showOpenDialog(this);
-			if (returnVal == JFileChooser.APPROVE_OPTION)
+			if (returnVal == JFileChooser.APPROVE_OPTION){
 				archivoGuardar = abrir.getSelectedFile();
-			else
-				return;
-			//importExport . . . import(archivoGuardar.getPath());
+				user.importar(archivoGuardar.getPath());
+			}
+			return;
 		}
-		if(e.getSource()==exportar){			
+		if(e.getSource()==exportar){	
 			returnVal =  guardar.showSaveDialog(null);
-			if (returnVal == JFileChooser.APPROVE_OPTION)
+			if(returnVal == JFileChooser.APPROVE_OPTION){
 				archivoGuardar = guardar.getSelectedFile();
-			else
-				return;
-			//importExport . . . import(archivoGuardar.getPath());
-			//Sera con el boton (. . .) para que seleccione la ruta en el dialog y se puede agregar condiciones de guardado
-			//importar no usara dialog , pero tendra mas validaciones ya que al leer, y procesar el transact debe ser valido
+				user.exportar(archivoGuardar.getPath());
+				//Verificasr cual es la extension seleccionada para diferenciar y aplicar su importacion adecuada O
+				// Dejarlo a puro SQL .-.
+			}
+			return;
 		}
 	}
 	
@@ -741,6 +776,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		if(arg0.getSource()==this){
 			int o = JOptionPane.showConfirmDialog(null, "Realmente desea salir?", "Advertencia", JOptionPane.YES_NO_OPTION);
 			if (o == 0){
+				importExport.logErrorres().closeStream();
 				con.dbClose();
 				System.exit(0);
 			}
@@ -748,6 +784,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		if(arg0.getSource()==ad){
 			nuevoLink.setText("");
 			area.setText("");
+			sorter.setText("");
 			cajaABC.setSelectedIndex(0);
 			modelAbc.setRowCount(0);
 			bandera=false;
