@@ -8,6 +8,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import bdex.sqlite;
@@ -17,14 +19,14 @@ import todos.palabra;
 
 public class interfaz extends JFrame implements ActionListener, MouseListener, WindowListener{
 	private static final long serialVersionUID = 1L;
-	static JDialog ad;
+	static JDialog ad; //Sera una clase aparte para repartir codigo
 	static JMenuBar menuBar;
 	static JMenu sistem, search, rules;
 	static JMenuItem consultar, agregar, agregarMas, borrar, importar, exportar, salir, start, stop, nivelDos, omisas, newomisas;
 	static Vector<String> paginas = new Vector<String>(0, 1);
 	static Vector<Object> agregaAbc;
 	static boolean bandera=false, iniciado=false, iniciadoTodos=false;
-	static int multiplo=0, pags=0, frame = 0, reglon, error=0, returnVal;
+	static int multiplo=0, pags=0, frame = 0, reglon, error=0;
 	static JTextField clave, nuevoLink, sorter;
 	static JTextArea area;
 	static JButton buscar, insert, delete;
@@ -48,6 +50,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	JScrollPane Consulta, scrollAbc, scrollInsert;
 	JPanel PanelTabla, panelAbc, panelInsert;
 	DefaultTableModel modelAbc;
+	MultiLineCellRenderer aiuda;
 	
 	public interfaz(){
 		super("Gallbo: Motor de busqueda");		
@@ -123,15 +126,15 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		add(barra);
 		
 		Tabla = new JTable(crawl.getModel());
-		Tabla.setRowHeight(80);
+		Tabla.setRowHeight(80);	
 		Tabla.getColumnModel().getColumn(0).setMaxWidth(30);
 		Tabla.getColumnModel().getColumn(0).setResizable(false);
 		Tabla.getColumnModel().getColumn(1).setMaxWidth(150);
 		Tabla.getColumnModel().getColumn(1).setResizable(false);
 		Tabla.getColumnModel().getColumn(2).setMaxWidth(630);
 		Tabla.getColumnModel().getColumn(2).setResizable(false);
-		Tabla.getTableHeader().setReorderingAllowed(false);
-		Tabla.setDefaultRenderer(String.class, new MultiLineCellRenderer());
+		Tabla.getTableHeader().setReorderingAllowed(false);		
+		Tabla.setDefaultRenderer(String.class, aiuda = new MultiLineCellRenderer());
 		
 		Consulta = new JScrollPane(Tabla);
 		
@@ -188,6 +191,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	    
 	    tablaAbc = new JTable(modelAbc);
 	    tablaAbc.setRowHeight(25);
+	    tablaAbc.setBackground(Color.RED);
 	    tablaAbc.getColumnModel().getColumn(0).setMaxWidth(35);
 		tablaAbc.getColumnModel().getColumn(0).setResizable(false);
 	    tablaAbc.getColumnModel().getColumn(1).setMaxWidth(445);
@@ -300,8 +304,16 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 
 	private void buscar(){
 		prep();
-		
 		if(!dos.isEmpty()){
+			if(dos.size()>6){
+				int res = JOptionPane.showConfirmDialog(null, "La cantidad de palabras es: "+dos.size()+", \nSe recomienda maximo 6\nDesea continuar?", "Advertencia", JOptionPane.YES_NO_OPTION);
+				if (res == 1){
+					buscar.setEnabled(true);
+					barra.setMax(barra.getMaximum());
+					JOptionPane.showMessageDialog(null, "Busqueda finalizada\nEncontrados: 0");
+					return;
+				}
+			}
 			multiplo=dos.size();
 			pags = paginas.size();
 			hilos = new Thread[pags*multiplo];
@@ -326,6 +338,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		buscar.setEnabled(false);
 		barra.setValue(0);
 		crawl.clearVector();
+		aiuda.emptyPoint();
 		dos.clear();
 		procesa(clave.getText());
 	}
@@ -477,7 +490,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 					prep();
 					estado.reset();
 					iniciadoTodos = true;					
-					if(!dos.isEmpty()){
+					if(!dos.isEmpty()){						
 						if(!((JCheckBoxMenuItem)nivelDos).getState())
 							((JCheckBoxMenuItem)nivelDos).setSelected(true);
 						
@@ -572,7 +585,6 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			try{
 				System.out.println("Total de periodicos: "+con.getTotal());
 			}catch(SQLException ex){
-				
 			}
 			removeAd();
 			ad.add(sorter);
@@ -698,20 +710,16 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			return;
 		}
 		if(e.getSource()==importar){			
-			returnVal = abrir.showOpenDialog(this);
-			if (returnVal == JFileChooser.APPROVE_OPTION){
-				archivoGuardar = abrir.getSelectedFile();
+			abrir.showOpenDialog(this);
+			if ((archivoGuardar = abrir.getSelectedFile()) != null){
 				user.importar(archivoGuardar.getPath());
 			}
 			return;
 		}
 		if(e.getSource()==exportar){	
-			returnVal =  guardar.showSaveDialog(null);
-			if(returnVal == JFileChooser.APPROVE_OPTION){
-				archivoGuardar = guardar.getSelectedFile();
+			guardar.showSaveDialog(null);
+			if ((archivoGuardar = guardar.getSelectedFile()) != null){
 				user.exportar(archivoGuardar.getPath());
-				//Verificasr cual es la extension seleccionada para diferenciar y aplicar su importacion adecuada O
-				// Dejarlo a puro SQL .-.
 			}
 			return;
 		}
@@ -723,6 +731,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 				otrasUrls = crawl.getVector(1);
 				try{
 					Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + otrasUrls.elementAt(Tabla.getSelectedRow()));
+					aiuda.setHighlighted(Tabla.getSelectedRow(), 2, true);
 				}catch(Exception err){
 					JOptionPane.showMessageDialog(null,"Error: "+err);
 				}
@@ -776,7 +785,6 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		if(arg0.getSource()==this){
 			int o = JOptionPane.showConfirmDialog(null, "Realmente desea salir?", "Advertencia", JOptionPane.YES_NO_OPTION);
 			if (o == 0){
-				importExport.logErrorres().closeStream();
 				con.dbClose();
 				System.exit(0);
 			}
@@ -793,7 +801,8 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	public void windowDeactivated(WindowEvent arg0){}
 	public void windowDeiconified(WindowEvent arg0){}
 	public void windowIconified(WindowEvent arg0){}
-	public void windowOpened(WindowEvent arg0){}	
+	public void windowOpened(WindowEvent arg0){}
+	
 	public static void main(String[]args) {
 		String os = System.getProperty("os.name").toLowerCase();
 		String name = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
@@ -808,13 +817,35 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	
 	public class MultiLineCellRenderer extends JTextArea implements TableCellRenderer {
 		private static final long serialVersionUID = 1L;
-
+		
 		public MultiLineCellRenderer() {
 			setLineWrap(true);
 		    setWrapStyleWord(true);
 		    setOpaque(true);
 		}
 		
+		public Set<Point> highlightedCells = new HashSet<Point>();
+
+	    void setHighlighted(int r, int c, boolean highlighted)
+	    {
+	        if (highlighted)
+	        {
+	            highlightedCells.add(new Point(r,c));
+	        }
+	        else
+	        {
+	            highlightedCells.remove(new Point(r,c));
+	        }
+	    }
+
+	    private boolean isHighlighted(int r, int c){
+	        return highlightedCells.contains(new Point(r,c));
+	    }
+	    
+	    public void emptyPoint(){
+	    	highlightedCells.clear();
+	    }
+	    
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
 			if (isSelected) {
 			      setForeground(table.getSelectionForeground());
@@ -822,10 +853,16 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			} else {
 			      setForeground(table.getForeground());
 			      setBackground(table.getBackground());
-			}
-			setFont(table.getFont());
+			}			
+		    
+		    if(isHighlighted(row,  column)){
+	            setForeground(table.getSelectionForeground());
+	            setBackground(Color.LIGHT_GRAY);
+	        }
+		    
+		    setFont(table.getFont());
 			setText((value == null) ? "" : value.toString());
-		    return this;
+	        return this;
 		}
 	}
 }

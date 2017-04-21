@@ -1,1 +1,333 @@
-﻿
+Error de conexion: https://www.blogger.com
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+Error de conexion: http://www.yucatannoticias.com/
+Error de conexion: http://www.diarioelreloj.com.mx/
+Error de conexion: http://dqr.com.mx/
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+Error de conexion: http://www.maspormas.com/
+[19/4/2017 12:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:5]
+[20/4/2017 8:5]
+[20/4/2017 8:30]
+[20/4/2017 9:18]
+ 19),('http://sintesis.mx/', 21),('http://diarioimagenqroo.mx/noticias/', 23),('http://www.debate.com.mx/', 25), --Municipios('http://www.termometroenlinea.com.mx/', 26),('http://www.e-tlaxcala.mx/', 29), --Municipios('http://www.e-consulta.com/', 21),('http://www.yucatanalamano.com/', 31), --Estados('http://heraldo.mx/', 1),('http://www.frontera.info/', 2), --Municipios('http://www.afntijuana.info/', 2),('http://peninsulardigital.com/', 3), --Municipios('http://www.extradelalaguna.com.mx/', 5),('http://www.diarioavanzada.com.mx/', 6), --Municipios('https://www.unomasuno.com.mx/', 9),('https://www.diariodemexico.com/', 9), --Sensitive 'shares' NOT FIXED('http://www.diarioelreloj.com.mx/', 13), --Revisar etiquetas('http://www.elindependientedehidalgo.com.mx/', 13),('http://vallartaopina.net/', 14),('http://elvalle.com.mx/', 15),('https://www.elsoldemorelia.com.mx/', 16),('http://www.eldiariovision.com.mx/', 16),('http://www.diariomarca.com.mx/', 20) --Estados,('http://bbmnoticias.com/', 20),('http://www.capitalqueretaro.com.mx/', 22), --Municipios('http://amqueretaro.com/', 22),('http://diariozm.com/principal/', 24), --Estatal y regional('https://www.elsoldelbajio.com.mx/', 11),('https://www.la-prensa.com.mx/', 14),('http://liderweb.mx/', 28), --Nuevo laredo('http://www.ctierrablanca.mx/', 30),('https://www.puntomedio.mx/', 31), --Estados, municipios ej. de links a omitir, ademas de las fotos -.-('http://www.noticiasmvs.com/#!/home', 9), --Estados('http://www.elfinanciero.com.mx/', 15),('http://www.eluniversaledomex.mx/home.html', 15), --Municipios y mas municipios('http://www.horacero.com.mx/', 28), --Estados('http://www.latarde.com.mx/', 28),('http://rvial.mx/noticias', 9),('http://diariodelistmo.com/', 30),('http://zocalo.com.mx/', 5),('http://www.info7.mx/', 19),('http://muyatiempo.com/es/', 1),('http://www.lja.mx/', 1),('http://agpnoticias.com/news/', 2),('http://www.uniradioinforma.com/inicio', 2), --Estados('http://www.balun-canan.com/', 2),('http://esdiario.com.mx/', 7),('http://www.alcontacto.com.mx/', 8),('http://elmonitorparral.com/', 8),('http://elcomentario.ucol.mx/', 6),('http://www.informate.com.mx/', 9),('http://www.dia7.com.mx/', 11),('http://www.criteriohidalgo.com/', 13),('http://www.semanario.com.mx/ps/', 14),('http://trespm.com.mx/', 15),('http://elsurtamazunchale.com/principal/', 24),('http://www.eluniversaldf.mx/home.html', 15), --Municipios('http://www.diariodecomitan.com.mx/', 7),('http://www.palestraaguascalientes.com/', 1),('http://www.omnia.com.mx/', 8),('http://ovaciones.com/', 9), --Deportiva pero con secciones('http://www.nuevosiglo.com/', 14),('https://www.launion.com.mx/', 17),('http://www.adiariooax.com/', 20),('http://www.eluniversalqueretaro.mx/', 22),('http://www.elmosquito.com.mx/', 22),('http://antenasanluis.mx/', 24), --Estados('http://elportalslp.com.mx/', 24), ('http://www.observadortlaxcalteca.com/portal/', 29),('http://yucatanahora.com/', 31),('http://yucatanalminuto.com/', 31),('http://progresohoy.com/', 31), --Capital y estados('http://www.elpopular.mx/', 21),('http://alinstantenoticias.com/portal/', 25), --Local, Nacional('http://imagendeveracruz.com.mx/', 30),('http://notiver.com.mx/', 30),('http://www.aldiadallas.com/news/mexico/', 9), --Dallas?('http://elmundodetehuacan.com/', 21),('https://www.quequi.com.mx/', 23),('http://ntrzacatecas.com/noticias/', 32),('http://mexicorojo.mx/blog', 15), --NarcoBlog('http://eluniversalveracruz.com.mx/', 30),('https://www.noticiasvespertinas.com.mx/', 19),('https://www.elsoldemexico.com.mx/', 15),('https://www.esto.com.mx/', 9),('https://www.elsoldehermosillo.com.mx/', 26),('http://www.noticiasdequeretaro.com.mx/', 22),('http://vivavoz.com.mx/', 25),('http://codigotlaxcala.com/', 29),('http://www.veracruzenlanoticia.com/', 30),('http://marcha.com.mx/', 30),('http://www.pueblaonline.com.mx/2015/portal/#&panel1-1', 21),('http://oaxacaentrelineas.com/', 20),('http://www.poblanerias.com/seccion/puebla-en-100/', 21), --Esta rara esta pagina('http://zonafranca.mx/', 11),('http://enfoqueoaxaca.com/', 20),('http://zona3.mx/', 14),('http://elmundodeorizaba.com/', 30),('http://www.excelsior.com.mx/', 9),('http://www.elgrafico.mx/', 9),('https://www.maspormas.com/', 9),('http://elobservador.mx/', 8),('http://www.newshidalgo.mx/', 13),('http://www.nvinoticias.com/', 7),('http://expresocampeche.com/', 4),('http://www.multimedios.com/telediario', 19),('http://cvnzacatecas.com.mx/', 32),('http://wradio.com.mx/', 13), --300 D:('http://www.24-horas.mx/', 9),('http://www.nayaritenlinea.mx/', 18),('http://entrelineas.com.mx/', 8),('http://www.libertaddepalabra.com/', 22),('http://www.sdpnoticias.com/', 20),('http://diarioportal.com/', 15),('http://www.sdpnoticias.com/local/baja-california-sur', 3),('http://www.sdpnoticias.com/local/chiapas', 7),('http://www.sdpnoticias.com/local/ciudad-de-mexico', 9),('http://www.sdpnoticias.com/local/edomex', 15),('http://www.sdpnoticias.com/local/guadalajara', 14),('http://www.sdpnoticias.com/local/guerrero', 12),('http://www.sdpnoticias.com/local/jalisco', 14),('http://www.sdpnoticias.com/local/monterrey', 19),('http://www.sdpnoticias.com/local/nuevo-leon', 19),('http://www.sdpnoticias.com/local/morelos', 17),('http://www.sdpnoticias.com/local/oaxaca', 20),('http://www.sdpnoticias.com/local/puebla', 21),('http://www.sdpnoticias.com/local/quintana-roo', 23),('http://www.sdpnoticias.com/local/sonora', 26),('http://www.sdpnoticias.com/local/tamaulipas', 28),('http://www.sdpnoticias.com/local/veracruz', 30),('https://www.quadratin.com.mx/', 16),('http://mensajerodelasierra.com/', 22), --Municipios('http://www.elnoticieroenlinea.com/', 6),('http://www.eldiariodecoahuila.com.mx/', 5),('http://periodicoeltiempo.mx/', 5),('http://www.periodicoabc.mx/', 19),('http://dqr.com.mx/', 23),('http://eldictamen.mx/', 30),('http://www.tiempodeveracruz.com/', 30),('http://laverdadnoticias.com/', 31), --Estados('http://www.nnc.mx/nayarit.html', 18),('http://www.diarioamanecer.com.mx/', 15),('http://www.edomexaldia.com.mx/', 15),('http://elsurdiario.com.mx/', 20),('http://diariodelyaqui.mx/', 26),('http://www.elregionaldesonora.com.mx/', 26),('http://eldiariodesinaloa.com/', 25),('http://laprensa.mx/', 28),('http://www.elheroico.mx/', 27),('http://www.ahoratabasco.com/', 27),('https://laextra.mx/', 16),('http://www.el-independiente.com.mx/', 16),('http://www.noticiasperfil.com/index/', 30), --Municipios('http://www.cuartopoder.mx/', 7),('http://pagina24.com.mx/', 1),('http://www.tribunadelabahia.com.mx/', 14),('http://www.elfaromx.com/', 14), --Estados('http://pagina24zacatecas.com.mx/', 32),('http://www.diariopuntual.com/noticias', 21),('http://www.diariodf.mx/', 9),('http://durango.notigram.com/', 10),('http://www.lajornadazacatecas.com.mx/', 32),('http://www.ljz.mx', 32),('http://www.diarioeyipantla.com/', 30),('http://desdelared.com.mx/', 1),('http://informadorbcs.com/', 3),('http://monitoreconomico.org/noticias/', 2),('https://noticabos.org/', 3),('http://www.campeche.com.mx/', 4),('http://lavozdecoatzacoalcos.com.mx/', 27),('http://diariolavozdelsureste.com/chiapas/', 7),('http://lavozdetapachula.com/', 7),('http://lavozdecomitan.com/', 7),('http://expresszacatecas.com/', 32),('http://www.sie7edechiapas.com/', 7),('http://puentelibre.mx/', 8),('http://elheraldodesaltillo.mx/', 5),('http://www.colimanoticias.com/', 6),('http://angelguardian.mx/', 6),('http://colimapm.com/', 6), --Estados('http://impacto.mx/', 9),('http://impacto.mx/seccion-alarma', 9),('http://heraldoleon.mx/', 19),('http://periodicocorreo.com.mx/', 11),('http://www.red-noticias.com/', 12),('http://www.novedadesacapulco.mx/', 12),('http://www.diariovialibre.com.mx/', 13),('http://www.diariodelashuastecas.com/principal/', 13),('http://www.cronicahidalgo.com/', 13),('http://abcdezihuatanejo.com/', 12),('http://redesdelsur.com.mx/2016/', 12),('http://noticiasdemichoacan.com/', 16),('http://elregional.com.mx/', 17),('http://www.eltiempodenayarit.mx/', 18),('http://www.elhorizonte.mx/', 19),('http://reporteindigo.com/', 19);-- http://www.mediatico.com/es/periodicos/america-latina/mexico/ -- una mas-- http://www.prensaescrita.com/america/mexico.php-- otra-- http://periodicos.servidor-alicante.com/?periodico_id=605-- Impresionante base de datos de periodicos nacionales y regionales-- obiamente no son todos": syntax error)
+[20/4/2017 10:59]
+Error de conexion: https://www.blogger.com
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+Error de conexion: http://elsurdiario.com.mx/
+[19/4/2017 12:4]
+Error de conexion: http://www5.smartadserver.com/ac?jump=1&nwid=438&siteid=49886&pgname=notas&fmtid=21845&visit=m&tmstp=[timestamp]&out=nonrich
+[19/4/2017 12:4]
+Error de conexion: http://www.maspormas.com/
+[19/4/2017 12:4]
+Error de conexion: http://www.jumpingkidscln.com/
+[20/4/2017 8:4]
+Error de conexion: http://pulsored.com.mx/web/
+[20/4/2017 8:4]
+Error de conexion: http://dqr.com.mx/
+[20/4/2017 8:4]
+Error de conexion: http://www.yucatannoticias.com/
+[20/4/2017 8:4]
+Error de conexion: http://www.diarioelreloj.com.mx/
+[20/4/2017 8:4]
+Error de conexion: http://www.diarioamanecer.com.mx/
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:5]
+[20/4/2017 8:5]
+[20/4/2017 8:30]
+[20/4/2017 9:18]
+[20/4/2017 10:54]
+[20/4/2017 10:54]
+[20/4/2017 10:59]
+[20/4/2017 10:59]
+Error de conexion: https://www.blogger.com
+Error de conexion: http://pulsored.com.mx/web/
+Error de conexion: http://www.yucatannoticias.com/
+Error de conexion: http://dqr.com.mx/
+[19/4/2017 12:4]
+Error de conexion: http://www5.smartadserver.com/ac?jump=1&nwid=438&siteid=49886&pgname=home&fmtid=7847&visit=m&tmstp=[timestamp]&out=nonrich
+Error de conexion: http://elsurdiario.com.mx/
+Error de conexion: http://www.maspormas.com/
+[20/4/2017 8:4]
+Error de conexion: http://heraldo.mx/
+Error de conexion: http://www.adiariooax.com/
+Error de conexion: http://www.noticiasperfil.com/index/
+[20/4/2017 9:18]
+[19/4/2017 11:21]
+[19/4/2017 11:21]
+Error de conexion: http://pulsored.com.mx/web/
+Error de conexion: http://www.diarioelreloj.com.mx/
+Error de conexion: http://www5.smartadserver.com/ac?jump=1&nwid=438&siteid=49886&pgname=home&fmtid=20802&visit=m&tmstp=[timestamp]&out=nonrich
+Error de conexion: http://elsurdiario.com.mx/
+Error de conexion: http://www.jumpingkidscln.com/
+[20/4/2017 8:4]
+Error de conexion: http://www.diarioamanecer.com.mx/
+Error de conexion: http://www.maspormas.com/
+Error de conexion: http://elsurdiario.com.mx/
+Error de conexion: http://expreso.com.mx/images/documentos/edimpresa-espacios-publicidad.pdf
+[20/4/2017 10:54]
+[20/4/2017 10:59]
+Error de conexion: http://pulsored.com.mx/web/
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+Error de conexion: http://pulsored.com.mx/web/
+Error de conexion: http://www.yucatannoticias.com/
+Error de conexion: http://www.diarioamanecer.com.mx/
+Error de conexion: http://www.maspormas.com/
+Error de conexion: http://elsurdiario.com.mx/
+Error de conexion: http://expreso.com.mx/images/documentos/edimpresa-espacios-publicidad.pdf
+[20/4/2017 10:54]
+[20/4/2017 10:59]
+Error de conexion: https://www.blogger.com
+Error de conexion: http://www.diarioelreloj.com.mx/
+Error de conexion: http://www5.smartadserver.com/ac?jump=1&nwid=438&siteid=49886&pgname=home&fmtid=7847&visit=m&tmstp=[timestamp]&out=nonrich
+Error de conexion: http://www.jumpingkidscln.com/
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+Error de conexion: http://www.maspormas.com/
+Error de conexion: http://elsurdiario.com.mx/
+Error de conexion: http://expreso.com.mx/images/documentos/edimpresa-espacios-publicidad.pdf
+[19/4/2017 11:21]
+[19/4/2017 12:4]
+Error de conexion: http://pulsored.com.mx/web/
+Error de conexion: http://www5.smartadserver.com/ac?jump=1&nwid=438&siteid=49886&pgname=home&fmtid=20802&visit=m&tmstp=[timestamp]&out=nonrich
+Error de conexion: http://www.maspormas.com/
+Error de conexion: http://dqr.com.mx/
+[20/4/2017 10:59]
+Error de conexion: http://www.diarioelreloj.com.mx/
+[19/4/2017 12:4]
+[20/4/2017 8:4]
+Error de conexion: https://www.blogger.com
+Error de conexion: http://pulsored.com.mx/web/
+Error de conexion: http://www5.smartadserver.com/ac?jump=1&nwid=438&siteid=49886&pgname=home&fmtid=7847&visit=m&tmstp=[timestamp]&out=nonrich
+Error de conexion: http://pulsored.com.mx/web/
+Error de conexion: http://www.yucatannoticias.com/
+org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: Estados)
+[21/4/2017 8:47]
+[21/4/2017 8:47]
+null
+[21/4/2017 8:47]
+[21/4/2017 8:47]
+[21/4/2017 8:47]
+[21/4/2017 8:47]
+[21/4/2017 8:48]
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+Error de conexion: http://www.enlineadirecta.info/index.html
+Error de conexion: https://www.blogger.com/share-post.g?blogID=8668167956132331641&postID=2387270655474477910&target=email
+Error de conexion: http://turismo.municipiodesolidaridad.gob.mx/
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+[21/4/2017 9:27]
+Error de conexion: http://www.diarioelreloj.com.mx/
+[21/4/2017 9:27]
+Error de conexion: http://www.yucatannoticias.com/
+Error de conexion: https://www.blogger.com
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+Error de conexion: http://www.yucatannoticias.com/
+Error de conexion: http://www.diarioelreloj.com.mx/
+Error de conexion: http://dqr.com.mx/
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+Error de conexion: http://www.maspormas.com/
+[19/4/2017 12:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:5]
+[20/4/2017 8:5]
+[20/4/2017 8:30]
+[20/4/2017 9:18]
+ 19),('http://sintesis.mx/', 21),('http://diarioimagenqroo.mx/noticias/', 23),('http://www.debate.com.mx/', 25), --Municipios('http://www.termometroenlinea.com.mx/', 26),('http://www.e-tlaxcala.mx/', 29), --Municipios('http://www.e-consulta.com/', 21),('http://www.yucatanalamano.com/', 31), --Estados('http://heraldo.mx/', 1),('http://www.frontera.info/', 2), --Municipios('http://www.afntijuana.info/', 2),('http://peninsulardigital.com/', 3), --Municipios('http://www.extradelalaguna.com.mx/', 5),('http://www.diarioavanzada.com.mx/', 6), --Municipios('https://www.unomasuno.com.mx/', 9),('https://www.diariodemexico.com/', 9), --Sensitive 'shares' NOT FIXED('http://www.diarioelreloj.com.mx/', 13), --Revisar etiquetas('http://www.elindependientedehidalgo.com.mx/', 13),('http://vallartaopina.net/', 14),('http://elvalle.com.mx/', 15),('https://www.elsoldemorelia.com.mx/', 16),('http://www.eldiariovision.com.mx/', 16),('http://www.diariomarca.com.mx/', 20) --Estados,('http://bbmnoticias.com/', 20),('http://www.capitalqueretaro.com.mx/', 22), --Municipios('http://amqueretaro.com/', 22),('http://diariozm.com/principal/', 24), --Estatal y regional('https://www.elsoldelbajio.com.mx/', 11),('https://www.la-prensa.com.mx/', 14),('http://liderweb.mx/', 28), --Nuevo laredo('http://www.ctierrablanca.mx/', 30),('https://www.puntomedio.mx/', 31), --Estados, municipios ej. de links a omitir, ademas de las fotos -.-('http://www.noticiasmvs.com/#!/home', 9), --Estados('http://www.elfinanciero.com.mx/', 15),('http://www.eluniversaledomex.mx/home.html', 15), --Municipios y mas municipios('http://www.horacero.com.mx/', 28), --Estados('http://www.latarde.com.mx/', 28),('http://rvial.mx/noticias', 9),('http://diariodelistmo.com/', 30),('http://zocalo.com.mx/', 5),('http://www.info7.mx/', 19),('http://muyatiempo.com/es/', 1),('http://www.lja.mx/', 1),('http://agpnoticias.com/news/', 2),('http://www.uniradioinforma.com/inicio', 2), --Estados('http://www.balun-canan.com/', 2),('http://esdiario.com.mx/', 7),('http://www.alcontacto.com.mx/', 8),('http://elmonitorparral.com/', 8),('http://elcomentario.ucol.mx/', 6),('http://www.informate.com.mx/', 9),('http://www.dia7.com.mx/', 11),('http://www.criteriohidalgo.com/', 13),('http://www.semanario.com.mx/ps/', 14),('http://trespm.com.mx/', 15),('http://elsurtamazunchale.com/principal/', 24),('http://www.eluniversaldf.mx/home.html', 15), --Municipios('http://www.diariodecomitan.com.mx/', 7),('http://www.palestraaguascalientes.com/', 1),('http://www.omnia.com.mx/', 8),('http://ovaciones.com/', 9), --Deportiva pero con secciones('http://www.nuevosiglo.com/', 14),('https://www.launion.com.mx/', 17),('http://www.adiariooax.com/', 20),('http://www.eluniversalqueretaro.mx/', 22),('http://www.elmosquito.com.mx/', 22),('http://antenasanluis.mx/', 24), --Estados('http://elportalslp.com.mx/', 24), ('http://www.observadortlaxcalteca.com/portal/', 29),('http://yucatanahora.com/', 31),('http://yucatanalminuto.com/', 31),('http://progresohoy.com/', 31), --Capital y estados('http://www.elpopular.mx/', 21),('http://alinstantenoticias.com/portal/', 25), --Local, Nacional('http://imagendeveracruz.com.mx/', 30),('http://notiver.com.mx/', 30),('http://www.aldiadallas.com/news/mexico/', 9), --Dallas?('http://elmundodetehuacan.com/', 21),('https://www.quequi.com.mx/', 23),('http://ntrzacatecas.com/noticias/', 32),('http://mexicorojo.mx/blog', 15), --NarcoBlog('http://eluniversalveracruz.com.mx/', 30),('https://www.noticiasvespertinas.com.mx/', 19),('https://www.elsoldemexico.com.mx/', 15),('https://www.esto.com.mx/', 9),('https://www.elsoldehermosillo.com.mx/', 26),('http://www.noticiasdequeretaro.com.mx/', 22),('http://vivavoz.com.mx/', 25),('http://codigotlaxcala.com/', 29),('http://www.veracruzenlanoticia.com/', 30),('http://marcha.com.mx/', 30),('http://www.pueblaonline.com.mx/2015/portal/#&panel1-1', 21),('http://oaxacaentrelineas.com/', 20),('http://www.poblanerias.com/seccion/puebla-en-100/', 21), --Esta rara esta pagina('http://zonafranca.mx/', 11),('http://enfoqueoaxaca.com/', 20),('http://zona3.mx/', 14),('http://elmundodeorizaba.com/', 30),('http://www.excelsior.com.mx/', 9),('http://www.elgrafico.mx/', 9),('https://www.maspormas.com/', 9),('http://elobservador.mx/', 8),('http://www.newshidalgo.mx/', 13),('http://www.nvinoticias.com/', 7),('http://expresocampeche.com/', 4),('http://www.multimedios.com/telediario', 19),('http://cvnzacatecas.com.mx/', 32),('http://wradio.com.mx/', 13), --300 D:('http://www.24-horas.mx/', 9),('http://www.nayaritenlinea.mx/', 18),('http://entrelineas.com.mx/', 8),('http://www.libertaddepalabra.com/', 22),('http://www.sdpnoticias.com/', 20),('http://diarioportal.com/', 15),('http://www.sdpnoticias.com/local/baja-california-sur', 3),('http://www.sdpnoticias.com/local/chiapas', 7),('http://www.sdpnoticias.com/local/ciudad-de-mexico', 9),('http://www.sdpnoticias.com/local/edomex', 15),('http://www.sdpnoticias.com/local/guadalajara', 14),('http://www.sdpnoticias.com/local/guerrero', 12),('http://www.sdpnoticias.com/local/jalisco', 14),('http://www.sdpnoticias.com/local/monterrey', 19),('http://www.sdpnoticias.com/local/nuevo-leon', 19),('http://www.sdpnoticias.com/local/morelos', 17),('http://www.sdpnoticias.com/local/oaxaca', 20),('http://www.sdpnoticias.com/local/puebla', 21),('http://www.sdpnoticias.com/local/quintana-roo', 23),('http://www.sdpnoticias.com/local/sonora', 26),('http://www.sdpnoticias.com/local/tamaulipas', 28),('http://www.sdpnoticias.com/local/veracruz', 30),('https://www.quadratin.com.mx/', 16),('http://mensajerodelasierra.com/', 22), --Municipios('http://www.elnoticieroenlinea.com/', 6),('http://www.eldiariodecoahuila.com.mx/', 5),('http://periodicoeltiempo.mx/', 5),('http://www.periodicoabc.mx/', 19),('http://dqr.com.mx/', 23),('http://eldictamen.mx/', 30),('http://www.tiempodeveracruz.com/', 30),('http://laverdadnoticias.com/', 31), --Estados('http://www.nnc.mx/nayarit.html', 18),('http://www.diarioamanecer.com.mx/', 15),('http://www.edomexaldia.com.mx/', 15),('http://elsurdiario.com.mx/', 20),('http://diariodelyaqui.mx/', 26),('http://www.elregionaldesonora.com.mx/', 26),('http://eldiariodesinaloa.com/', 25),('http://laprensa.mx/', 28),('http://www.elheroico.mx/', 27),('http://www.ahoratabasco.com/', 27),('https://laextra.mx/', 16),('http://www.el-independiente.com.mx/', 16),('http://www.noticiasperfil.com/index/', 30), --Municipios('http://www.cuartopoder.mx/', 7),('http://pagina24.com.mx/', 1),('http://www.tribunadelabahia.com.mx/', 14),('http://www.elfaromx.com/', 14), --Estados('http://pagina24zacatecas.com.mx/', 32),('http://www.diariopuntual.com/noticias', 21),('http://www.diariodf.mx/', 9),('http://durango.notigram.com/', 10),('http://www.lajornadazacatecas.com.mx/', 32),('http://www.ljz.mx', 32),('http://www.diarioeyipantla.com/', 30),('http://desdelared.com.mx/', 1),('http://informadorbcs.com/', 3),('http://monitoreconomico.org/noticias/', 2),('https://noticabos.org/', 3),('http://www.campeche.com.mx/', 4),('http://lavozdecoatzacoalcos.com.mx/', 27),('http://diariolavozdelsureste.com/chiapas/', 7),('http://lavozdetapachula.com/', 7),('http://lavozdecomitan.com/', 7),('http://expresszacatecas.com/', 32),('http://www.sie7edechiapas.com/', 7),('http://puentelibre.mx/', 8),('http://elheraldodesaltillo.mx/', 5),('http://www.colimanoticias.com/', 6),('http://angelguardian.mx/', 6),('http://colimapm.com/', 6), --Estados('http://impacto.mx/', 9),('http://impacto.mx/seccion-alarma', 9),('http://heraldoleon.mx/', 19),('http://periodicocorreo.com.mx/', 11),('http://www.red-noticias.com/', 12),('http://www.novedadesacapulco.mx/', 12),('http://www.diariovialibre.com.mx/', 13),('http://www.diariodelashuastecas.com/principal/', 13),('http://www.cronicahidalgo.com/', 13),('http://abcdezihuatanejo.com/', 12),('http://redesdelsur.com.mx/2016/', 12),('http://noticiasdemichoacan.com/', 16),('http://elregional.com.mx/', 17),('http://www.eltiempodenayarit.mx/', 18),('http://www.elhorizonte.mx/', 19),('http://reporteindigo.com/', 19);-- http://www.mediatico.com/es/periodicos/america-latina/mexico/ -- una mas-- http://www.prensaescrita.com/america/mexico.php-- otra-- http://periodicos.servidor-alicante.com/?periodico_id=605-- Impresionante base de datos de periodicos nacionales y regionales-- obiamente no son todos": syntax error)
+[20/4/2017 10:59]
+Error de conexion: https://www.blogger.com
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+Error de conexion: http://elsurdiario.com.mx/
+[19/4/2017 12:4]
+Error de conexion: http://www5.smartadserver.com/ac?jump=1&nwid=438&siteid=49886&pgname=notas&fmtid=21845&visit=m&tmstp=[timestamp]&out=nonrich
+[19/4/2017 12:4]
+Error de conexion: http://www.maspormas.com/
+[19/4/2017 12:4]
+Error de conexion: http://www.jumpingkidscln.com/
+[20/4/2017 8:4]
+Error de conexion: http://pulsored.com.mx/web/
+[20/4/2017 8:4]
+Error de conexion: http://dqr.com.mx/
+[20/4/2017 8:4]
+Error de conexion: http://www.yucatannoticias.com/
+[20/4/2017 8:4]
+Error de conexion: http://www.diarioelreloj.com.mx/
+[20/4/2017 8:4]
+Error de conexion: http://www.diarioamanecer.com.mx/
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+[20/4/2017 8:5]
+[20/4/2017 8:5]
+[20/4/2017 8:30]
+[20/4/2017 9:18]
+[20/4/2017 10:54]
+[20/4/2017 10:54]
+[20/4/2017 10:59]
+[20/4/2017 10:59]
+Error de conexion: https://www.blogger.com
+Error de conexion: http://pulsored.com.mx/web/
+Error de conexion: http://www.yucatannoticias.com/
+Error de conexion: http://dqr.com.mx/
+[19/4/2017 12:4]
+Error de conexion: http://www5.smartadserver.com/ac?jump=1&nwid=438&siteid=49886&pgname=home&fmtid=7847&visit=m&tmstp=[timestamp]&out=nonrich
+Error de conexion: http://elsurdiario.com.mx/
+Error de conexion: http://www.maspormas.com/
+[20/4/2017 8:4]
+Error de conexion: http://heraldo.mx/
+Error de conexion: http://www.adiariooax.com/
+Error de conexion: http://www.noticiasperfil.com/index/
+[20/4/2017 9:18]
+[19/4/2017 11:21]
+[19/4/2017 11:21]
+Error de conexion: http://pulsored.com.mx/web/
+Error de conexion: http://www.diarioelreloj.com.mx/
+Error de conexion: http://www5.smartadserver.com/ac?jump=1&nwid=438&siteid=49886&pgname=home&fmtid=20802&visit=m&tmstp=[timestamp]&out=nonrich
+Error de conexion: http://elsurdiario.com.mx/
+Error de conexion: http://www.jumpingkidscln.com/
+[20/4/2017 8:4]
+Error de conexion: http://www.diarioamanecer.com.mx/
+Error de conexion: http://www.maspormas.com/
+Error de conexion: http://elsurdiario.com.mx/
+Error de conexion: http://expreso.com.mx/images/documentos/edimpresa-espacios-publicidad.pdf
+[20/4/2017 10:54]
+[20/4/2017 10:59]
+Error de conexion: http://pulsored.com.mx/web/
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+[19/4/2017 12:4]
+Error de conexion: http://pulsored.com.mx/web/
+Error de conexion: http://www.yucatannoticias.com/
+Error de conexion: http://www.diarioamanecer.com.mx/
+Error de conexion: http://www.maspormas.com/
+Error de conexion: http://elsurdiario.com.mx/
+Error de conexion: http://expreso.com.mx/images/documentos/edimpresa-espacios-publicidad.pdf
+[20/4/2017 10:54]
+[20/4/2017 10:59]
+Error de conexion: https://www.blogger.com
+Error de conexion: http://www.diarioelreloj.com.mx/
+Error de conexion: http://www5.smartadserver.com/ac?jump=1&nwid=438&siteid=49886&pgname=home&fmtid=7847&visit=m&tmstp=[timestamp]&out=nonrich
+Error de conexion: http://www.jumpingkidscln.com/
+[20/4/2017 8:4]
+[20/4/2017 8:4]
+Error de conexion: http://www.maspormas.com/
+Error de conexion: http://elsurdiario.com.mx/
+Error de conexion: http://expreso.com.mx/images/documentos/edimpresa-espacios-publicidad.pdf
+[19/4/2017 11:21]
+[19/4/2017 12:4]
+Error de conexion: http://pulsored.com.mx/web/
+Error de conexion: http://www5.smartadserver.com/ac?jump=1&nwid=438&siteid=49886&pgname=home&fmtid=20802&visit=m&tmstp=[timestamp]&out=nonrich
+Error de conexion: http://www.maspormas.com/
+Error de conexion: http://dqr.com.mx/
+[20/4/2017 10:59]
+Error de conexion: http://www.diarioelreloj.com.mx/
+[19/4/2017 12:4]
+[20/4/2017 8:4]
+Error de conexion: https://www.blogger.com
+Error de conexion: http://pulsored.com.mx/web/
+Error de conexion: http://www5.smartadserver.com/ac?jump=1&nwid=438&siteid=49886&pgname=home&fmtid=7847&visit=m&tmstp=[timestamp]&out=nonrich
+Error de conexion: http://pulsored.com.mx/web/
+Error de conexion: http://www.yucatannoticias.com/
+org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: Estados)
+[21/4/2017 8:47]
+[21/4/2017 8:47]
+null
+[21/4/2017 8:47]
+[21/4/2017 8:47]
+[21/4/2017 8:47]
+[21/4/2017 8:47]
+[21/4/2017 8:48]
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+Error de conexion: http://www.enlineadirecta.info/index.html
+Error de conexion: https://www.blogger.com/share-post.g?blogID=8668167956132331641&postID=2387270655474477910&target=email
+Error de conexion: http://turismo.municipiodesolidaridad.gob.mx/
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+[21/4/2017 8:49]
+[21/4/2017 9:27]
+Error de conexion: http://www.diarioelreloj.com.mx/
+[21/4/2017 9:27]
+Error de conexion: http://www.yucatannoticias.com/
+[21/4/2017 9:58]
+Error de conexion: http://pulsored.com.mx/web/
+[21/4/2017 9:58]
+Error de conexion: http://www.diarioelreloj.com.mx/
+[21/4/2017 9:58]
+Error de conexion: http://dqr.com.mx/
+[21/4/2017 9:58]
+Error de conexion: http://www.yucatannoticias.com/
+[21/4/2017 9:58]
+Error de conexion: http://www.adiariooax.com/
+[21/4/2017 9:58]
+Error de conexion: http://www.maspormas.com/
+[21/4/2017 9:59]
+Error de conexion: http://www.diarioelreloj.com.mx/
+[21/4/2017 9:59]
+Error de conexion: http://pulsored.com.mx/web/
+[21/4/2017 9:59]
+Error de conexion: http://www.yucatannoticias.com/
+[21/4/2017 10:12]
+Error de conexion: http://pulsored.com.mx/web/
+[21/4/2017 10:12]
+Error de conexion: http://www.yucatannoticias.com/
+[21/4/2017 10:13]
+Error de conexion: http://heraldo.mx/
+[21/4/2017 10:41]
+Error de conexion: http://heraldo.mx/
+
+[21/4/2017 10:41]
+Error de conexion: http://heraldo.mx/

@@ -1,5 +1,5 @@
 package main;
-class semaforo {
+public class semaforo {
 
 	private int Recursos;
 

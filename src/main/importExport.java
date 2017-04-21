@@ -24,6 +24,7 @@ public class importExport{
 	
 	public void importar(String path){		
 		try{
+			sql="";
 	        archivo = new File (path);
 	        fr = new FileReader (archivo);
 	        br = new BufferedReader(fr);	        
@@ -31,8 +32,12 @@ public class importExport{
 	        	sql += linea;
 	        
 	        interfaz.getSql().setQuery(sql);
-		}catch(Exception e){			
-			JOptionPane.showMessageDialog(null,"Erroral importar: "+e.toString().substring(0, 150));
+		}catch(Exception e){
+			if(e.toString().length()>120)
+				JOptionPane.showMessageDialog(null,"Erroral importar: "+e.toString().substring(0, 120));
+			else
+				JOptionPane.showMessageDialog(null,"Erroral importar: "+e.toString());
+			
 			logErrores.error(e.toString());	        
 	    }finally{
 	         try{
@@ -114,24 +119,22 @@ public class importExport{
 
 		} catch (IOException e) {
 			e.printStackTrace();
-		}        
-	}
-	
-	public void closeStream(){
-		try {
-			if(bw != null)
-				bw.close();
+		}finally{
+			try {
+				if(bw != null)
+					bw.close();
 
-			if(fw != null)
-				fw.close();
-			
-			if(fr != null)
-        		 fr.close();
-			
-			if(br != null)
-        		 br.close();
-		} catch (IOException ex) {
-			ex.printStackTrace();
+				if(fw != null)
+					fw.close();
+				
+				if(fr != null)
+	        		 fr.close();
+				
+				if(br != null)
+	        		 br.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 	
