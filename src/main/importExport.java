@@ -12,14 +12,14 @@ public class importExport{
 	BufferedReader br = null;
 	FileWriter fw = null;
 	BufferedWriter bw = null;
-	String sql = "", linea;
+	String acumulado="", sql = "", linea, auxInt;
 	Date fecha;
 	ResultSet rs;
 	int total;
 	static importExport logErrores = new importExport();
 	
 	public importExport(){
-	      
+	      acumulado="";
 	}
 	
 	public void importar(String path){		
@@ -91,10 +91,23 @@ public class importExport{
 	}
 	
 	@SuppressWarnings("deprecation")
-	public void error(String s){
+	public void error(String s){		
+		fecha = new Date();
+		if(fecha.getMinutes()<10){
+			auxInt = "0"+fecha.getMinutes();
+		}else{
+			auxInt = fecha.getMinutes()+"";
+		}
+		acumulado += "["+fecha.getDate()+"/"+(fecha.getMonth()+1)+"/"+(1900+fecha.getYear())+" "+fecha.getHours()+":"+auxInt+"]";
+		acumulado += "\n"+s+"\n";
+	}
+		
+	public void saveLog(){
+		if(acumulado.length()==0)
+			return;
 		try {
-			linea="";
 			sql="";
+			linea="";
 			archivo = new File ("log/errorLog.log");
 	        fr = new FileReader (archivo);
 	        br = new BufferedReader(fr);
@@ -108,18 +121,15 @@ public class importExport{
 			
 			try{
 				bw.write(sql);
-				bw.newLine();
-				fecha = new Date();
-				bw.write("["+fecha.getDate()+"/"+(fecha.getMonth()+1)+"/"+(1900+fecha.getYear())+" "+fecha.getHours()+":"+fecha.getMinutes()+"]");
-				bw.newLine();
-				bw.write(s);
+				bw.write(acumulado);
 			}catch (Exception e){
-				JOptionPane.showMessageDialog(null,"Error al actualizar archivo log");
+				System.out.println("Error al actualizar archivo log");
 			}
 
-		} catch (IOException e) {
-			e.printStackTrace();
+		}catch (IOException e){
+			System.out.println("Error al usar el stream");
 		}finally{
+			acumulado="";
 			try {
 				if(bw != null)
 					bw.close();
@@ -136,9 +146,5 @@ public class importExport{
 				ex.printStackTrace();
 			}
 		}
-	}
-	
-	public static importExport logErrorres(){
-		return logErrores;
 	}
 }

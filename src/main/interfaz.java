@@ -308,7 +308,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			if(dos.size()>6){
 				int res = JOptionPane.showConfirmDialog(null, "La cantidad de palabras es: "+dos.size()+", \nSe recomienda maximo 6\nDesea continuar?", "Advertencia", JOptionPane.YES_NO_OPTION);
 				if (res == 1){
-					buscar.setEnabled(true);
+					reactivar();
 					barra.setMax(barra.getMaximum());
 					JOptionPane.showMessageDialog(null, "Busqueda finalizada\nEncontrados: 0");
 					return;
@@ -328,7 +328,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 				}
 			}
 		}else{
-			buscar.setEnabled(true);
+			reactivar();
 			barra.setMax(barra.getMaximum());
 			JOptionPane.showMessageDialog(null, "Busqueda finalizada\nEncontrados: 0");
 		}
@@ -336,6 +336,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	
 	private void prep(){
 		buscar.setEnabled(false);
+		start.setEnabled(false);
 		barra.setValue(0);
 		crawl.clearVector();
 		aiuda.emptyPoint();
@@ -476,6 +477,8 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	
 	public static void reactivar(){
 		buscar.setEnabled(true);
+		start.setEnabled(true);
+		importExport.logErrores.saveLog();
 		if(((JCheckBoxMenuItem)nivelDos).getState()){
 			((JCheckBoxMenuItem)nivelDos).setSelected(false);;
 		}
@@ -487,7 +490,16 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			if(caja.getSelectedIndex()==0){
 				int o = JOptionPane.showConfirmDialog(null, "Se buscara en TODOS los estados\nRealmente deseas continuar?", "Precaución", JOptionPane.YES_NO_OPTION);
 				if (o == 0){
-					prep();
+					prep();					
+					if(dos.size()>6){
+						int res = JOptionPane.showConfirmDialog(null, "La cantidad de palabras es: "+dos.size()+", \nSe recomienda maximo 6\nDesea continuar?", "Advertencia", JOptionPane.YES_NO_OPTION);
+						if (res == 1){
+							reactivar();
+							barra.setMax(barra.getMaximum());
+							JOptionPane.showMessageDialog(null, "Busqueda finalizada\nEncontrados: 0");
+							return;
+						}
+					}
 					estado.reset();
 					iniciadoTodos = true;					
 					if(!dos.isEmpty()){						
@@ -519,7 +531,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 					hilos[i].stop();
 			}
 			iniciado=false;
-			buscar.setEnabled(true);
+			reactivar();
 			return;
 		}
 		if(e.getSource()==stop && iniciadoTodos){
@@ -530,7 +542,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 					hiloNewMeta[i].stop();
 			}
 			iniciadoTodos=false;
-			buscar.setEnabled(true);
+			reactivar();
 			return;
 		}
 		if(e.getSource()==salir){
@@ -786,6 +798,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			int o = JOptionPane.showConfirmDialog(null, "Realmente desea salir?", "Advertencia", JOptionPane.YES_NO_OPTION);
 			if (o == 0){
 				con.dbClose();
+				reactivar();
 				System.exit(0);
 			}
 		}
