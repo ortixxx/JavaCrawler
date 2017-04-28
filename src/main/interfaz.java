@@ -19,7 +19,7 @@ import todos.palabra;
 
 public class interfaz extends JFrame implements ActionListener, MouseListener, WindowListener{
 	private static final long serialVersionUID = 1L;
-	static JDialog ad; //Sera una clase aparte para repartir codigo
+	static dialog ad; //Sera una clase aparte para repartir codigo
 	static JMenuBar menuBar;
 	static JMenu sistem, search, rules;
 	static JMenuItem consultar, agregar, agregarMas, borrar, importar, exportar, salir, start, stop, nivelDos, omisas, newomisas;
@@ -48,7 +48,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	Vector<String> otras = new Vector<String>(), otrasUrls = new Vector<String>(), dos = new Vector<String>(0, 1);
 	JTable Tabla, tablaAbc;
 	JScrollPane Consulta, scrollAbc, scrollInsert;
-	JPanel PanelTabla, panelAbc, panelInsert;
+	static JPanel PanelTabla, panelAbc, panelInsert;
 	DefaultTableModel modelAbc;
 	MultiLineCellRenderer aiuda;
 	
@@ -191,7 +191,6 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	    
 	    tablaAbc = new JTable(modelAbc);
 	    tablaAbc.setRowHeight(25);
-	    tablaAbc.setBackground(Color.RED);
 	    tablaAbc.getColumnModel().getColumn(0).setMaxWidth(35);
 		tablaAbc.getColumnModel().getColumn(0).setResizable(false);
 	    tablaAbc.getColumnModel().getColumn(1).setMaxWidth(445);
@@ -224,12 +223,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		sorter = new JTextField();
 		sorter.setBounds(10, 10, 470, 30);
 		
-		ad = new JDialog(this, "ABC periodicos", true);
-		ad.setLayout(null);
-		ad.setSize(625, 80);
-		ad.setLocationRelativeTo(null);
-		ad.setLocation( ad.getY()+17, ad.getX()-170);
-		ad.setResizable(false);
+		ad = new dialog();		
 		
 		abrir = new JFileChooser();
 		abrir.setDialogTitle("Importar");
@@ -369,21 +363,6 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 				}								
 			}			
 		}
-	}
-
-	private void removeAd(){
-		if(frame > 4)
-			ad.setTitle("Reglas");
-		else
-			ad.setTitle("ABC periodicos");
-		
-		ad.remove(delete);
-		ad.remove(cajaABC);
-		ad.remove(insert);
-		ad.remove(nuevoLink);
-		ad.remove(panelAbc);
-		ad.remove(panelInsert);
-		ad.remove(sorter);
 	}
 
 	private void ordenaCaja(){
@@ -554,80 +533,33 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			return;
 		}
 		if(e.getSource()==agregar){
-			frame=1;
-			removeAd();
-			nuevoLink.setSize(340, 30);
-			ad.add(nuevoLink);
-			cajaABC.setLocation(360, 10);
-			ad.add(cajaABC);
-			insert.setLocation(490, 10); 
-			ad.add(insert);
-			ad.setSize(625, 78);
-			ad.setVisible(true);
+			ad.removeAd(frame=1);
+			return;
+		}		
+		if(e.getSource()==borrar){					
+			ordenaCaja();
+			ad.removeAd(frame=2);	
+			return;
+		}
+		if(e.getSource()==consultar){			
+			try{
+				System.out.println("Total de periodicos: "+con.getTotal());
+			}catch(SQLException ex){}
+			ordenaCaja();
+			ad.removeAd(frame=3);			
 			return;
 		}
 		if(e.getSource()==agregarMas){
-			frame=4;
-			removeAd();
-			cajaABC.setLocation(490, 10);
-			ad.add(cajaABC);
-			insert.setLocation(490, 258);
-			ad.add(insert);
-			ad.add(panelInsert);
-			ad.setSize(625, 325);
-			ad.setVisible(true);
-			return;
-		}
-		if(e.getSource()==borrar){
-			frame=2;
-			removeAd();
-			ad.add(sorter);
-			cajaABC.setLocation(490, 10);
-			ad.add(cajaABC);
-			panelAbc.setLocation(10, 50);
-			ad.add(panelAbc);
-			ad.add(delete);
-			ordenaCaja();
-			ad.setSize(625, 325);
-			ad.setVisible(true);
-			return;
-		}
-		if(e.getSource()==consultar){
-			frame=3;
-			try{
-				System.out.println("Total de periodicos: "+con.getTotal());
-			}catch(SQLException ex){
-			}
-			removeAd();
-			ad.add(sorter);
-			cajaABC.setLocation(490, 10);
-			ad.add(cajaABC);
-			panelAbc.setLocation(10, 50);
-			ad.add(panelAbc);
-			ordenaCaja();
-			ad.setSize(625, 325);
-			ad.setVisible(true);
+			ad.removeAd(frame=4);
 			return;
 		}
 		if(e.getSource()==newomisas){
-			frame=5;
-			removeAd();
-			nuevoLink.setSize(470, 30);
-			ad.add(nuevoLink);
-			insert.setLocation(490, 10);
-			ad.add(insert);
-			ad.setSize(625, 78);
-			ad.setVisible(true);
+			ad.removeAd(frame=5);
 			return;
 		}
 		if(e.getSource()==omisas){
-			frame=6;
-			removeAd();
-			panelAbc.setLocation(10, 10);
-			ad.add(panelAbc);
 			ordenaOmitidos();
-			ad.setSize(495, 285);
-			ad.setVisible(true);
+			ad.removeAd(frame=6);			
 			return;
 		}
 		if((e.getSource()==insert || e.getSource()==nuevoLink ) && frame==1 && cajaABC.getSelectedIndex()!=0){
