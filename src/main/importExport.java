@@ -3,7 +3,6 @@ package main;
 import java.io.*;
 import java.sql.ResultSet;
 import java.util.Date;
-
 import javax.swing.JOptionPane;
 
 public class importExport{
@@ -106,21 +105,12 @@ public class importExport{
 		if(acumulado.length()==0)
 			return;
 		try {
-			sql="";
-			linea="";
 			archivo = new File ("log/errorLog.log");
-	        fr = new FileReader (archivo);
-	        br = new BufferedReader(fr);
-	        while((linea=br.readLine())!=null){
-	        	if(linea.length()>0)
-	        		sql += linea+"\n";
-	        }	        	
 	        
-			fw = new FileWriter("log/errorLog.log");
+			fw = new FileWriter(archivo.getAbsoluteFile(), true);
 			bw = new BufferedWriter(fw);
 			
 			try{
-				bw.write(sql);
 				bw.write(acumulado);
 			}catch (Exception e){
 				System.out.println("Error al actualizar archivo log");
@@ -136,12 +126,6 @@ public class importExport{
 
 				if(fw != null)
 					fw.close();
-				
-				if(fr != null)
-	        		 fr.close();
-				
-				if(br != null)
-	        		 br.close();
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}

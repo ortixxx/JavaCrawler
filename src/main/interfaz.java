@@ -19,7 +19,7 @@ import todos.palabra;
 
 public class interfaz extends JFrame implements ActionListener, MouseListener, WindowListener{
 	private static final long serialVersionUID = 1L;
-	static dialog ad; //Sera una clase aparte para repartir codigo
+	static dialog ad;
 	static JMenuBar menuBar;
 	static JMenu sistem, search, rules;
 	static JMenuItem consultar, agregar, agregarMas, borrar, importar, exportar, salir, start, stop, nivelDos, omisas, newomisas;
@@ -41,6 +41,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	static JFileChooser abrir, guardar;
 	static File archivoGuardar;
 	static importExport user = new importExport();
+	static Desktop desktop = java.awt.Desktop.getDesktop();
 	Thread [] hilos, aux, hiloNewMeta;
 	crawl [] inicio;
 	palabra [] newMeta;
@@ -63,13 +64,13 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	    agregarMas = new JMenuItem("Agregar mas...");
 	    borrar = new JMenuItem("Borrar Pagina");
 	    consultar = new JMenuItem("Consultar");
-	    importar = new JMenuItem("Importar", new ImageIcon("icon/import-icon.png"));
-	    exportar = new JMenuItem("Exportar", new ImageIcon("icon/export-icon.png"));
-	    salir = new JMenuItem("Salir", new ImageIcon("icon/delete-icon.png"));
+	    importar = new JMenuItem("Importar", new ImageIcon("img/import-icon.png"));
+	    exportar = new JMenuItem("Exportar", new ImageIcon("img/export-icon.png"));
+	    salir = new JMenuItem("Salir", new ImageIcon("img/delete-icon.png"));
 	    
 	    search = new JMenu("Busqueda");
-	    start = new JMenuItem("Iniciar", new ImageIcon("icon/Start-2-icon.png"));
-	    stop  = new JMenuItem("Detener", new ImageIcon("icon/Stop-2-icon.png"));
+	    start = new JMenuItem("Iniciar", new ImageIcon("img/Start-icon.png"));
+	    stop  = new JMenuItem("Detener", new ImageIcon("img/Stop-icon.png"));
 	    nivelDos = new JCheckBoxMenuItem("Nivel Dos", false);
 	    
 	    rules = new JMenu("Reglas");
@@ -431,6 +432,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 					con.setQuery(sql);					
 					System.out.println("Total de periodicos: "+con.getTotal());
 				} catch (SQLException ex) {
+					importExport.logErrores.error(ex.toString());
 					error=2;
 					return false;
 				}
@@ -673,8 +675,8 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		if (e.getClickCount() == 2){
 			if (e.getSource() == Tabla) {
 				otrasUrls = crawl.getVector(1);
-				try{
-					Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + otrasUrls.elementAt(Tabla.getSelectedRow()));
+				try{					
+					desktop.browse(java.net.URI.create(otrasUrls.elementAt(Tabla.getSelectedRow())));
 					aiuda.setHighlighted(Tabla.getSelectedRow(), 2, true);
 				}catch(Exception err){
 					JOptionPane.showMessageDialog(null,"Error: "+err);
@@ -689,7 +691,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			}
 			if(e.getSource()==tablaAbc && frame==3){
 				try{
-					Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + paginas.elementAt(tablaAbc.getSelectedRow()));
+					desktop.browse(java.net.URI.create(paginas.elementAt(tablaAbc.getSelectedRow())));
 				}catch(Exception err){
 					JOptionPane.showMessageDialog(null,"Error: "+err);
 				}
@@ -748,15 +750,19 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	public void windowIconified(WindowEvent arg0){}
 	public void windowOpened(WindowEvent arg0){}
 	
-	public static void main(String[]args) {
-		String os = System.getProperty("os.name").toLowerCase();
-		String name = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
-		if (os.indexOf("win") >= 0) {
-		     try {
-		          UIManager.setLookAndFeel(name);		          
-		     }
-		     catch (Exception e) {}
-		}
+	public static void main(String[]args) {		
+		try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(interfaz.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(interfaz.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(interfaz.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(interfaz.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+		
 		new interfaz();
 	}
 	
