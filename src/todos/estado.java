@@ -28,13 +28,13 @@ public class estado implements Runnable{
 		
 		for(int i = 0;i<paginas.size();i++){
 			m.extrae(paginas.elementAt(i));
-			System.out.println("Padre: "+(contador++));
+			interfaz.getOut().append("Padre: "+(contador++)+"\n");
 			interfaz.getBarra().setValue(contador);
 		}
 		if(contador==cont){
 			interfaz.reactivar();
 			interfaz.getBarra().setValue(contador);
-			System.out.println("Busqueda Finalizada!");
+			interfaz.getOut().append("Busqueda Finalizada!"+"\n");
 		}			
 	}
 	

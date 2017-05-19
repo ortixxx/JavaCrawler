@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.text.DefaultCaret;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -28,7 +30,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	static boolean bandera=false, iniciado=false, iniciadoTodos=false;
 	static int multiplo=0, pags=0, frame = 0, reglon, error=0;
 	static JTextField clave, nuevoLink, sorter;
-	static JTextArea area;
+	static JTextArea area, Output;
 	static JButton buscar, insert, delete;
 	static barra barra;
 	static omitir omitidos = new omitir();
@@ -49,6 +51,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	Vector<String> otras = new Vector<String>(), otrasUrls = new Vector<String>(), dos = new Vector<String>(0, 1);
 	JTable Tabla, tablaAbc;
 	JScrollPane Consulta, scrollAbc, scrollInsert;
+	static JScrollPane JspOutput;
 	static JPanel PanelTabla, panelAbc, panelInsert;
 	DefaultTableModel modelAbc;
 	MultiLineCellRenderer aiuda;
@@ -237,9 +240,19 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		guardar.setDialogTitle("Exportar");
 		guardar.setSelectedFile(new File("periodicos.sql"));
 		
+		Output = new JTextArea();
+		Output.setFont(nuevoLink.getFont());
+		DefaultCaret caret = (DefaultCaret)Output.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+	 	Output.setEditable(false);
+	 	
+	 	JspOutput = new JScrollPane(Output);
+	 	JspOutput.setBounds(5, 600, 785, 60);
+	 	add(JspOutput);
+		
 		listeners();
 		setIconImage(new ImageIcon("loge.png").getImage());
-		setSize(800,650);
+		setSize(800,715);
 		setLayout(null);
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -314,6 +327,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 			hilos = new Thread[pags*multiplo];
 			inicio = new crawl[pags*multiplo];
 			barra.setMax(hilos.length);
+			Output.append("Busqueda inicial: "+hilos.length+"\n");
 			crawl.setZ(hilos.length);
 			for(int i=0;i<dos.size();i++){
 				for(int j=0;j<pags;j++){
@@ -336,6 +350,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		crawl.clearVector();
 		aiuda.emptyPoint();
 		dos.clear();
+		Output.setText("");
 		procesa(clave.getText());
 	}
 	
@@ -416,7 +431,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 				ordenaCaja();
 				bandera=false;
 				JOptionPane.showMessageDialog(null, "Pagina eliminada");
-				System.out.println("Total de periodicos: "+con.getTotal());
+				Output.append("Total de periodicos: "+con.getTotal()+"\n");
 			}catch(Exception ex){
 				JOptionPane.showMessageDialog(null, "Error al eliminar\n"+paginas.elementAt(reglon));
 			}
@@ -430,7 +445,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 				sql = "INSERT OR IGNORE INTO periodicos VALUES ('"+s+"', "+cajaABC.getSelectedIndex()+")";
 				try {
 					con.setQuery(sql);					
-					System.out.println("Total de periodicos: "+con.getTotal());
+					Output.append("Total de periodicos: "+con.getTotal()+"\n");
 				} catch (SQLException ex) {
 					importExport.logErrores.error(ex.toString());
 					error=2;
@@ -454,6 +469,10 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 	
 	public static barra getBarra(){
 		return barra;
+	}
+	
+	public static JTextArea getOut(){
+		return Output;
 	}
 	
 	public static void reactivar(){
@@ -489,13 +508,15 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 						
 						newMeta = new palabra[dos.size()];
 						hiloNewMeta = new Thread[dos.size()];
+						try {
+							Output.append("Busqueda inicial: "+con.getTotal()*dos.size()+"\n");							
+						} catch (SQLException e1) {}
+						
 						for(int i=0;i<dos.size();i++){
 							newMeta[i] = new palabra(dos.elementAt(i));
 							hiloNewMeta[i] = new Thread(newMeta[i]);
 							hiloNewMeta[i].start();
 						}
-					}else{
-						
 					}
 				}				
 				return;
@@ -545,7 +566,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		}
 		if(e.getSource()==consultar){			
 			try{
-				System.out.println("Total de periodicos: "+con.getTotal());
+				Output.append("Total de periodicos: "+con.getTotal()+"\n");
 			}catch(SQLException ex){}
 			ordenaCaja();
 			ad.removeAd(frame=3);			
@@ -623,7 +644,7 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 					nuevoLink.setText("");
 					JOptionPane.showMessageDialog(null, "Palabra agregada");
 				} catch (SQLException ex) {
-					System.out.println("Error al agregar");
+					Output.append("Error al agregar"+"\n");
 				}
 			}
 			return;

@@ -66,14 +66,14 @@ public class crawl implements Runnable{
 	
 	public void run(){			
 		extrae(sitio);
-		//System.out.println("MurioHilo: "+(y++));
-		y++;
+		interfaz.getOut().append("Hilo: "+(y++)+"\n");
+		//y++;
 		if(y!=z){
 			interfaz.getBarra().setValue(y);
 		}else{
 			interfaz.reactivar();
 			interfaz.getBarra().setValue(y);
-			System.out.println("Busqueda Finalizada!");
+			interfaz.getOut().append("Busqueda Finalizada!"+"\n");
 		}
 	}
 	

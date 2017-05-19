@@ -113,11 +113,11 @@ public class importExport{
 			try{
 				bw.write(acumulado);
 			}catch (Exception e){
-				System.out.println("Error al actualizar archivo log");
+				interfaz.getOut().append("Error al actualizar archivo log"+"\n");
 			}
 
 		}catch (IOException e){
-			System.out.println("Error al usar el stream");
+			interfaz.getOut().append("Error al usar el stream"+"\n");
 		}finally{
 			acumulado="";
 			try {
