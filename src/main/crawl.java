@@ -22,7 +22,7 @@ public class crawl implements Runnable{
 	public static int x = 1, y = 0, z = 0;
 	public static LocalDate mark;
 	crawl rec;
-	int nivel = 0;
+	int nivel = 0, estado;
 	LocalDate copia;
 	String sitio, clave, texto, titulo, date, des;
 	Vector<Object> uotro;
@@ -160,8 +160,12 @@ public class crawl implements Runnable{
 	    	des=mte.getDes();
 	    	if(des.equals("No description"))
 	    		des=URL;
-	    			    		
-			uotro.add(titulo+"\n"+date+"\n"+mte.getDes());
+	    	
+	    	if(interfaz.getTodos())		    		
+	    		uotro.add(interfaz.getEstados()[(estado-1)]+"\n"+titulo+"\n"+date+"\n"+mte.getDes());
+	    	else
+	    		uotro.add(titulo+"\n"+date+"\n"+mte.getDes());
+			
 			model.addRow(uotro);
 			noticias.add(mte.getTitle());
 			urls.add(URL);	
@@ -248,5 +252,9 @@ public class crawl implements Runnable{
 
 	public static void setZ(int i) {
 		z = i;
+	}
+	
+	public void setEstado(int e){
+		estado=e;
 	}
 }

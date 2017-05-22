@@ -471,8 +471,16 @@ public class interfaz extends JFrame implements ActionListener, MouseListener, W
 		return barra;
 	}
 	
+	public static boolean getTodos(){
+		return iniciadoTodos;
+	}
+	
 	public static JTextArea getOut(){
 		return Output;
+	}
+	
+	public static String[] getEstados(){
+		return estadosABC;
 	}
 	
 	public static void reactivar(){

@@ -27,6 +27,7 @@ public class estado implements Runnable{
 		m = new crawl(paginas.firstElement(), palabra, 0);
 		
 		for(int i = 0;i<paginas.size();i++){
+			m.setEstado(estado);
 			m.extrae(paginas.elementAt(i));
 			interfaz.getOut().append("Padre: "+(contador++)+"\n");
 			interfaz.getBarra().setValue(contador);
